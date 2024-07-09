@@ -1,5 +1,6 @@
 # game_logic.py
 
+import random
 from items import Item, Food, Armor, Weapon
 import config
 
@@ -15,6 +16,7 @@ class GameLogic:
         self.day_count = 1
         self.distance = 0.0
         self.inventory = self.initialize_inventory()
+        self.log = []
 
     def initialize_inventory(self):
         inventory = {}
@@ -34,6 +36,7 @@ class GameLogic:
             self.hunger -= 0.2
             self.fatigue -= 0.5
             self.mood -= 0.1
+            self.random_event()
         else:
             self.thirst -= 0.01
             self.hunger -= 0.02
@@ -45,9 +48,19 @@ class GameLogic:
         self.fatigue = max(self.fatigue, 0)
         self.mood = max(self.mood, 0)
 
+    def random_event(self):
+        # 50%概率获得一个苹果
+        if random.random() < 0.5:
+            if "Apple" in self.inventory:
+                self.inventory["Apple"].quantity += 1
+            else:
+                self.inventory["Apple"] = Food("Apple", 1, hunger_restore=20, thirst_restore=10)
+            self.log.append("You found an apple!")
+    
     def discard_item(self, item_name):
         if item_name in self.inventory:
             del self.inventory[item_name]
+            self.log.append(f"You discarded {item_name}")
 
     def eat_item(self, item_name):
         if item_name in self.inventory and isinstance(self.inventory[item_name], Food):
@@ -57,3 +70,4 @@ class GameLogic:
             food.quantity -= 1
             if food.quantity <= 0:
                 del self.inventory[item_name]
+            self.log.append(f"You ate an {item_name}")

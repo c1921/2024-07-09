@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton,
-    QProgressBar, QMenu
+    QProgressBar, QMenu, QTextEdit
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
 from game_logic import GameLogic
@@ -58,6 +58,10 @@ class AdventureRPG(QMainWindow):
         self.toggle_button = QPushButton("Rest", self)
         self.toggle_button.clicked.connect(self.toggle_state)
 
+        # 创建日志窗口
+        self.log_text = QTextEdit(self)
+        self.log_text.setReadOnly(True)
+
         # 布局
         state_layout = QVBoxLayout()
         state_layout.addWidget(self.hunger_bar)
@@ -71,6 +75,7 @@ class AdventureRPG(QMainWindow):
         main_layout.addWidget(self.inventory_table)
         main_layout.addLayout(state_layout)
         main_layout.addWidget(self.toggle_button)
+        main_layout.addWidget(self.log_text)
 
         container = QWidget()
         container.setLayout(main_layout)
@@ -91,6 +96,8 @@ class AdventureRPG(QMainWindow):
 
         self.game.update_time_and_distance()
         self.update_labels()
+        self.update_inventory()
+        self.update_log()
 
     def update_labels(self):
         time_text = f"Day {self.game.day_count}, {self.game_time.toString('HH:mm')}"
@@ -111,6 +118,10 @@ class AdventureRPG(QMainWindow):
             self.inventory_table.setItem(row_position, 0, QTableWidgetItem(item.name))
             self.inventory_table.setItem(row_position, 1, QTableWidgetItem(str(item.quantity)))
 
+    def update_log(self):
+        self.log_text.clear()
+        self.log_text.append("\n".join(self.game.log))
+
     def show_context_menu(self, position):
         menu = QMenu()
         row = self.inventory_table.currentRow()
@@ -129,11 +140,13 @@ class AdventureRPG(QMainWindow):
     def discard_item(self, item_name):
         self.game.discard_item(item_name)
         self.update_inventory()
+        self.update_log()
 
     def eat_item(self, item_name):
         self.game.eat_item(item_name)
         self.update_inventory()
         self.update_labels()
+        self.update_log()
 
     def toggle_state(self):
         self.game.is_traveling = not self.game.is_traveling
