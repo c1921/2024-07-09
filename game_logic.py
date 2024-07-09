@@ -25,10 +25,13 @@ class GameLogic:
                 if item_name in items:
                     item_data = items[item_name]
                     if item_type == "Food":
-                        hunger_restore, thirst_restore = item_data
-                        inventory[item_name] = Food(item_name, quantity, hunger_restore, thirst_restore)
+                        hunger_restore, thirst_restore, weight, value = item_data
+                        inventory[item_name] = Food(item_name, quantity, hunger_restore, thirst_restore, weight, value)
                     elif item_type == "Weapon":
-                        inventory[item_name] = Weapon(item_name, quantity, item_data["attack"])
+                        attack = item_data["attack"]
+                        weight = item_data["weight"]
+                        value = item_data["value"]
+                        inventory[item_name] = Weapon(item_name, quantity, attack, weight, value)
                     # 可根据需要添加其他类型
         return inventory
 
@@ -57,8 +60,8 @@ class GameLogic:
             if "Apple" in self.inventory:
                 self.inventory["Apple"].quantity += 1
             else:
-                hunger_restore, thirst_restore = config.ITEM_DEFINITIONS["Food"]["Apple"]
-                self.inventory["Apple"] = Food("Apple", 1, hunger_restore, thirst_restore)
+                hunger_restore, thirst_restore, weight, value = config.ITEM_DEFINITIONS["Food"]["Apple"]
+                self.inventory["Apple"] = Food("Apple", 1, hunger_restore, thirst_restore, weight, value)
             self.log.append("You found an apple!")
     
     def discard_item(self, item_name):

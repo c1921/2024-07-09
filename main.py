@@ -4,9 +4,9 @@ from PyQt6.QtWidgets import (
     QProgressBar, QMenu, QTextEdit, QAbstractItemView
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
-import config
 from game_logic import GameLogic
 from items import Food
+import config
 
 class AdventureRPG(QMainWindow):
     def __init__(self):
@@ -28,8 +28,8 @@ class AdventureRPG(QMainWindow):
 
         # 创建物品栏表格
         self.inventory_table = QTableWidget(self)
-        self.inventory_table.setColumnCount(2)
-        self.inventory_table.setHorizontalHeaderLabels(["Item", "Quantity"])
+        self.inventory_table.setColumnCount(4)
+        self.inventory_table.setHorizontalHeaderLabels(["Item", "Quantity", "Weight", "Value"])
         self.inventory_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.inventory_table.customContextMenuRequested.connect(self.show_context_menu)
         self.inventory_table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  # 禁止选中
@@ -120,6 +120,8 @@ class AdventureRPG(QMainWindow):
             self.inventory_table.insertRow(row_position)
             self.inventory_table.setItem(row_position, 0, QTableWidgetItem(item.name))
             self.inventory_table.setItem(row_position, 1, QTableWidgetItem(str(item.quantity)))
+            self.inventory_table.setItem(row_position, 2, QTableWidgetItem(str(item.weight)))
+            self.inventory_table.setItem(row_position, 3, QTableWidgetItem(str(item.value)))
 
     def update_log(self):
         self.log_text.clear()

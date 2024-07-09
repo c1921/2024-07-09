@@ -21,11 +21,11 @@ INITIAL_INVENTORY = {
 # 游戏中所有物品定义
 ITEM_DEFINITIONS = {
     "Food": {
-        "Apple": [20, 10],
-        "Blueberry": [10, 5],
-        "Mulberry": [15, 7]
+        "Apple": [20, 10, 0.5, 5],  # hunger_restore, thirst_restore, weight, value
+        "Blueberry": [10, 5, 0.1, 2],
+        "Mulberry": [15, 7, 0.2, 3]
     },
     "Weapon": {
-        "Sword": {"attack": 10}
+        "Sword": {"attack": 10, "weight": 5.0, "value": 100}
     }
 }
