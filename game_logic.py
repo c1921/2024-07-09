@@ -33,7 +33,7 @@ class GameLogic:
         self.armor = 0
         self.update_combat_attributes()
         self.log = []
-        self.character = Character("Player", self.strength, self.agility, self.charisma, self.intelligence, self.attack, self.armor)
+        self.character = Character("玩家", self.strength, self.agility, self.charisma, self.intelligence, self.attack, self.armor)
 
     def initialize_inventory(self):
         inventory = {}
@@ -75,20 +75,18 @@ class GameLogic:
         self.mood = max(self.mood, 0)
 
     def encounter(self):
-        opponent = Character("Opponent", random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15))
+        opponent = Character("对手", random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15))
         event = opponent.interact()
         if event == "nothing":
-            self.log.append("You encountered someone, but nothing happened.")
+            self.log.append("你遇到了一个人，但什么也没有发生。")
         elif event == "talk":
-            self.log.append("You encountered someone and had a conversation.")
+            self.log.append("你遇到了一个人，并进行了交谈。")
         elif event == "fight":
             result = self.character.fight(opponent)
             if result == "win":
-                self.log.append("You encountered someone and won the fight.")
+                self.log.append("你遇到了一个人，并赢得了战斗。")
             else:
-                self.log.append("You encountered someone and lost the fight.")
-                # You might want to add some logic here for what happens if you lose
-                # such as losing health or items
+                self.log.append("你遇到了一个人，并输了战斗。")
 
     def discard_item(self, item_name):
         if item_name in self.inventory:
