@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton,
-    QProgressBar, QMenu, QTextEdit
+    QProgressBar, QMenu, QTextEdit, QAbstractItemView
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
 from game_logic import GameLogic
@@ -31,6 +31,8 @@ class AdventureRPG(QMainWindow):
         self.inventory_table.setHorizontalHeaderLabels(["Item", "Quantity"])
         self.inventory_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.inventory_table.customContextMenuRequested.connect(self.show_context_menu)
+        self.inventory_table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  # 禁止选中
+        self.inventory_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)  # 禁止编辑
         self.update_inventory()
 
         # 创建角色状态进度条
@@ -128,12 +130,13 @@ class AdventureRPG(QMainWindow):
         if row >= 0:
             item_name = self.inventory_table.item(row, 0).text()
             item = self.game.inventory[item_name]
-            discard_action = menu.addAction("Discard")
-            discard_action.triggered.connect(lambda: self.discard_item(item_name))
 
             if isinstance(item, Food):
                 eat_action = menu.addAction("Eat")
                 eat_action.triggered.connect(lambda: self.eat_item(item_name))
+
+            discard_action = menu.addAction("Discard")
+            discard_action.triggered.connect(lambda: self.discard_item(item_name))
 
         menu.exec(self.inventory_table.viewport().mapToGlobal(position))
 
