@@ -1,6 +1,6 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
-from PyQt6.QtCore import QTimer, QTime, QDateTime
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QListWidget, QListWidgetItem
+from PyQt6.QtCore import QTimer, QTime
 
 class AdventureRPG(QMainWindow):
     def __init__(self):
@@ -10,21 +10,29 @@ class AdventureRPG(QMainWindow):
         self.game_time = QTime(0, 0)
         self.day_count = 1
         self.distance = 0.0
-        self.speed_per_minute = 100  # 每分钟100米
+        self.speed_per_minute = 80
+
+        # 初始化物品栏
+        self.inventory = {"Apple": 10}
 
         # 设置窗口
         self.setWindowTitle("Adventure RPG")
-        self.setGeometry(100, 100, 300, 200)
+        self.setGeometry(100, 100, 400, 300)
 
         # 创建标签
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
         self.update_labels()
 
+        # 创建物品栏列表
+        self.inventory_list = QListWidget(self)
+        self.update_inventory()
+
         # 布局
         layout = QVBoxLayout()
         layout.addWidget(self.time_label)
         layout.addWidget(self.distance_label)
+        layout.addWidget(self.inventory_list)
 
         container = QWidget()
         container.setLayout(layout)
@@ -52,6 +60,11 @@ class AdventureRPG(QMainWindow):
         distance_text = f"Distance traveled: {self.distance:.2f} meters"
         self.time_label.setText(time_text)
         self.distance_label.setText(distance_text)
+
+    def update_inventory(self):
+        self.inventory_list.clear()
+        for item, quantity in self.inventory.items():
+            self.inventory_list.addItem(f"{item}: {quantity}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
