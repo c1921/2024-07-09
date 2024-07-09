@@ -1,7 +1,9 @@
 # game_logic.py
 
 from items import Item, Food, Armor, Weapon, Accessory, Backpack, Mount, Carriage
+from character import Character
 import config
+import random
 
 class GameLogic:
     def __init__(self):
@@ -30,6 +32,8 @@ class GameLogic:
         self.attack = 0
         self.armor = 0
         self.update_combat_attributes()
+        self.log = []
+        self.character = Character("Player", self.strength, self.agility, self.charisma, self.intelligence, self.attack, self.armor)
 
     def initialize_inventory(self):
         inventory = {}
@@ -57,6 +61,8 @@ class GameLogic:
             self.hunger -= 0.2
             self.fatigue -= 0.5
             self.mood -= 0.1
+            if random.random() < 0.1:  # 10% 的概率遇到其他角色
+                self.encounter()
         else:
             self.thirst -= 0.01
             self.hunger -= 0.02
@@ -67,6 +73,22 @@ class GameLogic:
         self.hunger = max(self.hunger, 0)
         self.fatigue = max(self.fatigue, 0)
         self.mood = max(self.mood, 0)
+
+    def encounter(self):
+        opponent = Character("Opponent", random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15), random.randint(5, 15))
+        event = opponent.interact()
+        if event == "nothing":
+            self.log.append("You encountered someone, but nothing happened.")
+        elif event == "talk":
+            self.log.append("You encountered someone and had a conversation.")
+        elif event == "fight":
+            result = self.character.fight(opponent)
+            if result == "win":
+                self.log.append("You encountered someone and won the fight.")
+            else:
+                self.log.append("You encountered someone and lost the fight.")
+                # You might want to add some logic here for what happens if you lose
+                # such as losing health or items
 
     def discard_item(self, item_name):
         if item_name in self.inventory:

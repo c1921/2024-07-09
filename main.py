@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton,
-    QProgressBar, QMenu, QTabWidget
+    QProgressBar, QMenu, QTabWidget, QTextEdit
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
 from game_logic import GameLogic
@@ -51,6 +51,8 @@ class AdventureRPG(QMainWindow):
         self.mood_bar.setFormat("Mood: %p%")
         self.toggle_button = QPushButton("Rest", self)
         self.toggle_button.clicked.connect(self.toggle_state)
+        self.log_text_edit = QTextEdit(self)
+        self.log_text_edit.setReadOnly(True)
 
         travel_layout = QVBoxLayout()
         travel_layout.addWidget(self.time_label)
@@ -60,6 +62,7 @@ class AdventureRPG(QMainWindow):
         travel_layout.addWidget(self.fatigue_bar)
         travel_layout.addWidget(self.mood_bar)
         travel_layout.addWidget(self.toggle_button)
+        travel_layout.addWidget(self.log_text_edit)
         self.travel_tab.setLayout(travel_layout)
 
         # 物品与装备标签页
@@ -140,6 +143,10 @@ class AdventureRPG(QMainWindow):
         self.intelligence_label.setText(f"Intelligence: {self.game.intelligence}")
         self.attack_label.setText(f"Attack: {self.game.attack}")
         self.armor_label.setText(f"Armor: {self.game.armor}")
+
+        self.log_text_edit.clear()
+        for log_entry in self.game.log:
+            self.log_text_edit.append(log_entry)
 
     def update_inventory(self):
         self.inventory_table.setRowCount(0)
