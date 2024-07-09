@@ -4,8 +4,7 @@ from PyQt6.QtWidgets import (
     QProgressBar, QMenu, QTabWidget, QTextEdit
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
-from config import EQUIPMENT_SLOTS
-from game_logic import GameLogic
+from game_logic import GameLogic, EQUIPMENT_SLOTS
 from items import Food, Weapon, Armor, Accessory, Backpack, Mount, Carriage
 
 class AdventureRPG(QMainWindow):
@@ -151,16 +150,16 @@ class AdventureRPG(QMainWindow):
 
     def update_inventory(self):
         self.inventory_table.setRowCount(0)
-        for item in self.game.inventory.values():
+        for item_name, item in self.game.inventory.items():
             row_position = self.inventory_table.rowCount()
             self.inventory_table.insertRow(row_position)
-            item_name = QTableWidgetItem(item.name)
-            item_name.setFlags(item_name.flags() & ~Qt.ItemFlag.ItemIsEditable)  # 禁止编辑
-            item_name.setFlags(item_name.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # 禁止选中文字
-            item_quantity = QTableWidgetItem(str(item.quantity))
+            item_name_widget = QTableWidgetItem(item.name)
+            item_name_widget.setFlags(item_name_widget.flags() & ~Qt.ItemFlag.ItemIsEditable)  # 禁止编辑
+            item_name_widget.setFlags(item_name_widget.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # 禁止选中文字
+            item_quantity = QTableWidgetItem(str(self.game.inventory_quantities[item_name]))
             item_quantity.setFlags(item_quantity.flags() & ~Qt.ItemFlag.ItemIsEditable)  # 禁止编辑
             item_quantity.setFlags(item_quantity.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # 禁止选中文字
-            self.inventory_table.setItem(row_position, 0, item_name)
+            self.inventory_table.setItem(row_position, 0, item_name_widget)
             self.inventory_table.setItem(row_position, 1, item_quantity)
 
     def update_equipment(self):

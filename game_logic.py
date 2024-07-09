@@ -5,6 +5,16 @@ from character import Character
 import config
 import random
 
+# 更新装备栏的槽位名称
+EQUIPMENT_SLOTS = {
+    "weapon": "武器",
+    "armor": "护甲",
+    "accessory": "饰品",
+    "backpack": "背包",
+    "mount": "坐骑",
+    "carriage": "马车"
+}
+
 class GameLogic:
     def __init__(self):
         # 初始化游戏状态
@@ -17,6 +27,7 @@ class GameLogic:
         self.day_count = 1
         self.distance = 0.0
         self.inventory = self.initialize_inventory()
+        self.inventory_quantities = self.initialize_inventory_quantities()
         self.equipment = {
             "weapon": None,
             "armor": None,
@@ -39,20 +50,23 @@ class GameLogic:
         inventory = {}
         for item_name, item_data in config.INITIAL_INVENTORY.items():
             if item_data["type"] == "Food":
-                inventory[item_name] = Food(item_name, item_data["quantity"], item_data["hunger_restore"], item_data["thirst_restore"])
+                inventory[item_name] = Food(item_name, item_data["hunger_restore"], item_data["thirst_restore"])
             elif item_data["type"] == "Weapon":
-                inventory[item_name] = Weapon(item_name, item_data["quantity"], item_data["attack"])
+                inventory[item_name] = Weapon(item_name, item_data["attack"])
             elif item_data["type"] == "Armor":
-                inventory[item_name] = Armor(item_name, item_data["quantity"], item_data["defense"])
+                inventory[item_name] = Armor(item_name, item_data["defense"])
             elif item_data["type"] == "Accessory":
-                inventory[item_name] = Accessory(item_name, item_data["quantity"], item_data["effect"])
+                inventory[item_name] = Accessory(item_name, item_data["effect"])
             elif item_data["type"] == "Backpack":
-                inventory[item_name] = Backpack(item_name, item_data["quantity"], item_data["capacity"])
+                inventory[item_name] = Backpack(item_name, item_data["capacity"])
             elif item_data["type"] == "Mount":
-                inventory[item_name] = Mount(item_name, item_data["quantity"], item_data["speed_bonus"])
+                inventory[item_name] = Mount(item_name, item_data["speed_bonus"])
             elif item_data["type"] == "Carriage":
-                inventory[item_name] = Carriage(item_name, item_data["quantity"], item_data["capacity"], item_data["speed_bonus"])
+                inventory[item_name] = Carriage(item_name, item_data["capacity"], item_data["speed_bonus"])
         return inventory
+
+    def initialize_inventory_quantities(self):
+        return {item_name: 1 for item_name in config.INITIAL_INVENTORY.keys()}
 
     def update_time_and_distance(self):
         if self.is_traveling:
@@ -91,15 +105,17 @@ class GameLogic:
     def discard_item(self, item_name):
         if item_name in self.inventory:
             del self.inventory[item_name]
+            del self.inventory_quantities[item_name]
 
     def eat_item(self, item_name):
         if item_name in self.inventory and isinstance(self.inventory[item_name], Food):
             food = self.inventory[item_name]
             self.hunger = min(self.hunger + food.hunger_restore, 100)
             self.thirst = min(self.thirst + food.thirst_restore, 100)
-            food.quantity -= 1
-            if food.quantity <= 0:
+            self.inventory_quantities[item_name] -= 1
+            if self.inventory_quantities[item_name] <= 0:
                 del self.inventory[item_name]
+                del self.inventory_quantities[item_name]
 
     def equip_item(self, item_name):
         if item_name in self.inventory:
@@ -116,9 +132,10 @@ class GameLogic:
                 self.equipment["mount"] = item
             elif isinstance(item, Carriage):
                 self.equipment["carriage"] = item
-            item.quantity -= 1
-            if item.quantity <= 0:
+            self.inventory_quantities[item_name] -= 1
+            if self.inventory_quantities[item_name] <= 0:
                 del self.inventory[item_name]
+                del self.inventory_quantities[item_name]
             self.update_combat_attributes()
 
     def unequip_item(self, slot):
@@ -126,10 +143,10 @@ class GameLogic:
             item = self.equipment[slot]
             item_name = item.name
             if item_name in self.inventory:
-                self.inventory[item_name].quantity += 1
+                self.inventory_quantities[item_name] += 1
             else:
                 self.inventory[item_name] = item
-                item.quantity = 1
+                self.inventory_quantities[item_name] = 1
             self.equipment[slot] = None
             self.update_combat_attributes()
 

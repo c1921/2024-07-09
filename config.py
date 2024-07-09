@@ -9,20 +9,11 @@ INITIAL_MOOD = 100
 
 # 物品初始配置
 INITIAL_INVENTORY = {
-    "苹果": {"type": "Food", "quantity": 10, "hunger_restore": 20, "thirst_restore": 10},
-    "剑": {"type": "Weapon", "quantity": 1, "attack": 10},
-    "盾牌": {"type": "Armor", "quantity": 1, "defense": 5},
-    "戒指": {"type": "Accessory", "quantity": 1, "effect": "魔法增强"},
-    "背包": {"type": "Backpack", "quantity": 1, "capacity": 50},
-    "马": {"type": "Mount", "quantity": 1, "speed_bonus": 20},
-    "马车": {"type": "Carriage", "quantity": 1, "capacity": 200, "speed_bonus": 10}
-}
-
-EQUIPMENT_SLOTS = {
-    "weapon": "武器",
-    "armor": "护甲",
-    "accessory": "饰品",
-    "backpack": "背包",
-    "mount": "坐骑",
-    "carriage": "马车"
+    "苹果": {"type": "Food", "hunger_restore": 20, "thirst_restore": 10},
+    "剑": {"type": "Weapon", "attack": 10},
+    "盾牌": {"type": "Armor", "defense": 5},
+    "戒指": {"type": "Accessory", "effect": "魔法增强"},
+    "背包": {"type": "Backpack", "capacity": 50},
+    "马": {"type": "Mount", "speed_bonus": 20},
+    "马车": {"type": "Carriage", "capacity": 200, "speed_bonus": 10}
 }
