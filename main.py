@@ -1,29 +1,21 @@
 import sys
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QListWidget, QPushButton,
-    QProgressBar
+    QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton,
+    QProgressBar, QMenu
 )
-from PyQt6.QtCore import QTimer, QTime
+from PyQt6.QtCore import QTimer, QTime, Qt
+from game_logic import GameLogic
+from items import Food
 
 class AdventureRPG(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # 初始化时间和距离
+        # 初始化游戏逻辑
+        self.game = GameLogic()
+
+        # 初始化时间
         self.game_time = QTime(0, 0)
-        self.day_count = 1
-        self.distance = 0.0
-        self.speed_per_minute = 80  # 每分钟80米
-
-        # 初始化物品栏
-        self.inventory = {"Apple": 10}
-
-        # 初始化角色状态
-        self.hunger = 100
-        self.thirst = 100
-        self.fatigue = 100
-        self.mood = 100
-        self.is_traveling = True
 
         # 设置窗口
         self.setWindowTitle("Adventure RPG")
@@ -33,28 +25,33 @@ class AdventureRPG(QMainWindow):
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
 
-        # 创建物品栏列表
-        self.inventory_list = QListWidget(self)
+        # 创建物品栏表格
+        self.inventory_table = QTableWidget(self)
+        self.inventory_table.setColumnCount(2)
+        self.inventory_table.setHorizontalHeaderLabels(["Item", "Quantity"])
+        self.inventory_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.inventory_table.customContextMenuRequested.connect(self.show_context_menu)
+        self.update_inventory()
 
         # 创建角色状态进度条
         self.hunger_bar = QProgressBar(self)
         self.hunger_bar.setMaximum(100)
-        self.hunger_bar.setValue(int(self.hunger))
+        self.hunger_bar.setValue(int(self.game.hunger))
         self.hunger_bar.setFormat("Hunger: %p%")
 
         self.thirst_bar = QProgressBar(self)
         self.thirst_bar.setMaximum(100)
-        self.thirst_bar.setValue(int(self.thirst))
+        self.thirst_bar.setValue(int(self.game.thirst))
         self.thirst_bar.setFormat("Thirst: %p%")
 
         self.fatigue_bar = QProgressBar(self)
         self.fatigue_bar.setMaximum(100)
-        self.fatigue_bar.setValue(int(self.fatigue))
+        self.fatigue_bar.setValue(int(self.game.fatigue))
         self.fatigue_bar.setFormat("Fatigue: %p%")
 
         self.mood_bar = QProgressBar(self)
         self.mood_bar.setMaximum(100)
-        self.mood_bar.setValue(int(self.mood))
+        self.mood_bar.setValue(int(self.game.mood))
         self.mood_bar.setFormat("Mood: %p%")
 
         # 创建按钮
@@ -71,7 +68,7 @@ class AdventureRPG(QMainWindow):
         main_layout = QVBoxLayout()
         main_layout.addWidget(self.time_label)
         main_layout.addWidget(self.distance_label)
-        main_layout.addWidget(self.inventory_list)
+        main_layout.addWidget(self.inventory_table)
         main_layout.addLayout(state_layout)
         main_layout.addWidget(self.toggle_button)
 
@@ -86,58 +83,61 @@ class AdventureRPG(QMainWindow):
 
         # 更新标签显示
         self.update_labels()
-        self.update_inventory()
 
     def update_time_and_distance(self):
-        # 更新游戏时间
         self.game_time = self.game_time.addSecs(60)
         if self.game_time.hour() == 0 and self.game_time.minute() == 0:
-            self.day_count += 1
+            self.game.day_count += 1
 
-        if self.is_traveling:
-            # 更新距离
-            self.distance += self.speed_per_minute
-
-            # 更新状态
-            self.thirst -= 0.1
-            self.hunger -= 0.2
-            self.fatigue -= 0.5
-            self.mood -= 0.1
-        else:
-            # 更新状态
-            self.thirst -= 0.01
-            self.hunger -= 0.02
-            self.fatigue -= 0.05
-            self.mood -= 0.05
-
-        # 确保状态值不低于0
-        self.thirst = max(self.thirst, 0)
-        self.hunger = max(self.hunger, 0)
-        self.fatigue = max(self.fatigue, 0)
-        self.mood = max(self.mood, 0)
-
-        # 更新标签显示
+        self.game.update_time_and_distance()
         self.update_labels()
 
     def update_labels(self):
-        time_text = f"Day {self.day_count}, {self.game_time.toString('HH:mm')}"
-        distance_text = f"Distance traveled: {self.distance:.2f} meters"
+        time_text = f"Day {self.game.day_count}, {self.game_time.toString('HH:mm')}"
+        distance_text = f"Distance traveled: {int(self.game.distance)} meters"  # 将距离转换为整数
         self.time_label.setText(time_text)
         self.distance_label.setText(distance_text)
 
-        self.hunger_bar.setValue(int(self.hunger))
-        self.thirst_bar.setValue(int(self.thirst))
-        self.fatigue_bar.setValue(int(self.fatigue))
-        self.mood_bar.setValue(int(self.mood))
+        self.hunger_bar.setValue(int(self.game.hunger))
+        self.thirst_bar.setValue(int(self.game.thirst))
+        self.fatigue_bar.setValue(int(self.game.fatigue))
+        self.mood_bar.setValue(int(self.game.mood))
 
     def update_inventory(self):
-        self.inventory_list.clear()
-        for item, quantity in self.inventory.items():
-            self.inventory_list.addItem(f"{item}: {quantity}")
+        self.inventory_table.setRowCount(0)
+        for item in self.game.inventory.values():
+            row_position = self.inventory_table.rowCount()
+            self.inventory_table.insertRow(row_position)
+            self.inventory_table.setItem(row_position, 0, QTableWidgetItem(item.name))
+            self.inventory_table.setItem(row_position, 1, QTableWidgetItem(str(item.quantity)))
+
+    def show_context_menu(self, position):
+        menu = QMenu()
+        row = self.inventory_table.currentRow()
+        if row >= 0:
+            item_name = self.inventory_table.item(row, 0).text()
+            item = self.game.inventory[item_name]
+            discard_action = menu.addAction("Discard")
+            discard_action.triggered.connect(lambda: self.discard_item(item_name))
+
+            if isinstance(item, Food):
+                eat_action = menu.addAction("Eat")
+                eat_action.triggered.connect(lambda: self.eat_item(item_name))
+
+        menu.exec(self.inventory_table.viewport().mapToGlobal(position))
+
+    def discard_item(self, item_name):
+        self.game.discard_item(item_name)
+        self.update_inventory()
+
+    def eat_item(self, item_name):
+        self.game.eat_item(item_name)
+        self.update_inventory()
+        self.update_labels()
 
     def toggle_state(self):
-        self.is_traveling = not self.is_traveling
-        self.toggle_button.setText("Travel" if not self.is_traveling else "Rest")
+        self.game.is_traveling = not self.game.is_traveling
+        self.toggle_button.setText("Travel" if not self.game.is_traveling else "Rest")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
