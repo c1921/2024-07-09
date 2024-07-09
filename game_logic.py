@@ -23,6 +23,13 @@ class GameLogic:
             "mount": None,
             "carriage": None
         }
+        self.strength = 10
+        self.agility = 10
+        self.charisma = 10
+        self.intelligence = 10
+        self.attack = 0
+        self.armor = 0
+        self.update_combat_attributes()
 
     def initialize_inventory(self):
         inventory = {}
@@ -92,6 +99,7 @@ class GameLogic:
             item.quantity -= 1
             if item.quantity <= 0:
                 del self.inventory[item_name]
+            self.update_combat_attributes()
 
     def unequip_item(self, slot):
         if slot in self.equipment and self.equipment[slot] is not None:
@@ -103,3 +111,12 @@ class GameLogic:
                 self.inventory[item_name] = item
                 item.quantity = 1
             self.equipment[slot] = None
+            self.update_combat_attributes()
+
+    def update_combat_attributes(self):
+        self.attack = 0
+        self.armor = 0
+        if self.equipment["weapon"]:
+            self.attack += self.equipment["weapon"].attack
+        if self.equipment["armor"]:
+            self.armor += self.equipment["armor"].defense

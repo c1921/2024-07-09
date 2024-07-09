@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton,
-    QProgressBar, QMenu, QHBoxLayout
+    QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton,
+    QProgressBar, QMenu, QTabWidget
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
 from game_logic import GameLogic
@@ -21,68 +21,87 @@ class AdventureRPG(QMainWindow):
         self.setWindowTitle("Adventure RPG")
         self.setGeometry(100, 100, 800, 600)
 
-        # 创建标签
+        # 创建标签页
+        self.tabs = QTabWidget()
+        self.travel_tab = QWidget()
+        self.items_equipment_tab = QWidget()
+        self.character_tab = QWidget()
+        self.tabs.addTab(self.travel_tab, "旅行")
+        self.tabs.addTab(self.items_equipment_tab, "物品与装备")
+        self.tabs.addTab(self.character_tab, "人物")
+
+        # 旅行标签页
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
+        self.hunger_bar = QProgressBar(self)
+        self.hunger_bar.setMaximum(100)
+        self.hunger_bar.setValue(int(self.game.hunger))
+        self.hunger_bar.setFormat("Hunger: %p%")
+        self.thirst_bar = QProgressBar(self)
+        self.thirst_bar.setMaximum(100)
+        self.thirst_bar.setValue(int(self.game.thirst))
+        self.thirst_bar.setFormat("Thirst: %p%")
+        self.fatigue_bar = QProgressBar(self)
+        self.fatigue_bar.setMaximum(100)
+        self.fatigue_bar.setValue(int(self.game.fatigue))
+        self.fatigue_bar.setFormat("Fatigue: %p%")
+        self.mood_bar = QProgressBar(self)
+        self.mood_bar.setMaximum(100)
+        self.mood_bar.setValue(int(self.game.mood))
+        self.mood_bar.setFormat("Mood: %p%")
+        self.toggle_button = QPushButton("Rest", self)
+        self.toggle_button.clicked.connect(self.toggle_state)
 
-        # 创建物品栏表格
+        travel_layout = QVBoxLayout()
+        travel_layout.addWidget(self.time_label)
+        travel_layout.addWidget(self.distance_label)
+        travel_layout.addWidget(self.hunger_bar)
+        travel_layout.addWidget(self.thirst_bar)
+        travel_layout.addWidget(self.fatigue_bar)
+        travel_layout.addWidget(self.mood_bar)
+        travel_layout.addWidget(self.toggle_button)
+        self.travel_tab.setLayout(travel_layout)
+
+        # 物品与装备标签页
         self.inventory_table = QTableWidget(self)
         self.inventory_table.setColumnCount(2)
         self.inventory_table.setHorizontalHeaderLabels(["Item", "Quantity"])
         self.inventory_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.inventory_table.customContextMenuRequested.connect(self.show_context_menu)
-        self.inventory_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)  # 禁止编辑
+        self.inventory_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.update_inventory()
 
-        # 创建装备栏表格
         self.equipment_table = QTableWidget(self)
         self.equipment_table.setColumnCount(2)
         self.equipment_table.setHorizontalHeaderLabels(["Slot", "Item"])
-        self.equipment_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)  # 禁止编辑
+        self.equipment_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.update_equipment()
 
-        # 创建角色状态进度条
-        self.hunger_bar = QProgressBar(self)
-        self.hunger_bar.setMaximum(100)
-        self.hunger_bar.setValue(int(self.game.hunger))
-        self.hunger_bar.setFormat("Hunger: %p%")
+        items_equipment_layout = QHBoxLayout()
+        items_equipment_layout.addWidget(self.inventory_table)
+        items_equipment_layout.addWidget(self.equipment_table)
+        self.items_equipment_tab.setLayout(items_equipment_layout)
 
-        self.thirst_bar = QProgressBar(self)
-        self.thirst_bar.setMaximum(100)
-        self.thirst_bar.setValue(int(self.game.thirst))
-        self.thirst_bar.setFormat("Thirst: %p%")
+        # 人物标签页
+        self.strength_label = QLabel(f"Strength: {self.game.strength}")
+        self.agility_label = QLabel(f"Agility: {self.game.agility}")
+        self.charisma_label = QLabel(f"Charisma: {self.game.charisma}")
+        self.intelligence_label = QLabel(f"Intelligence: {self.game.intelligence}")
+        self.attack_label = QLabel(f"Attack: {self.game.attack}")
+        self.armor_label = QLabel(f"Armor: {self.game.armor}")
 
-        self.fatigue_bar = QProgressBar(self)
-        self.fatigue_bar.setMaximum(100)
-        self.fatigue_bar.setValue(int(self.game.fatigue))
-        self.fatigue_bar.setFormat("Fatigue: %p%")
+        character_layout = QVBoxLayout()
+        character_layout.addWidget(self.strength_label)
+        character_layout.addWidget(self.agility_label)
+        character_layout.addWidget(self.charisma_label)
+        character_layout.addWidget(self.intelligence_label)
+        character_layout.addWidget(self.attack_label)
+        character_layout.addWidget(self.armor_label)
+        self.character_tab.setLayout(character_layout)
 
-        self.mood_bar = QProgressBar(self)
-        self.mood_bar.setMaximum(100)
-        self.mood_bar.setValue(int(self.game.mood))
-        self.mood_bar.setFormat("Mood: %p%")
-
-        # 创建按钮
-        self.toggle_button = QPushButton("Rest", self)
-        self.toggle_button.clicked.connect(self.toggle_state)
-
-        # 布局
-        state_layout = QVBoxLayout()
-        state_layout.addWidget(self.hunger_bar)
-        state_layout.addWidget(self.thirst_bar)
-        state_layout.addWidget(self.fatigue_bar)
-        state_layout.addWidget(self.mood_bar)
-
-        inventory_layout = QVBoxLayout()
-        inventory_layout.addWidget(self.inventory_table)
-        inventory_layout.addWidget(self.equipment_table)
-
-        main_layout = QHBoxLayout()
-        main_layout.addLayout(inventory_layout)
-        main_layout.addLayout(state_layout)
-        main_layout.addWidget(self.time_label)
-        main_layout.addWidget(self.distance_label)
-        main_layout.addWidget(self.toggle_button)
+        # 设置主布局
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(self.tabs)
 
         container = QWidget()
         container.setLayout(main_layout)
@@ -114,6 +133,13 @@ class AdventureRPG(QMainWindow):
         self.thirst_bar.setValue(int(self.game.thirst))
         self.fatigue_bar.setValue(int(self.game.fatigue))
         self.mood_bar.setValue(int(self.game.mood))
+
+        self.strength_label.setText(f"Strength: {self.game.strength}")
+        self.agility_label.setText(f"Agility: {self.game.agility}")
+        self.charisma_label.setText(f"Charisma: {self.game.charisma}")
+        self.intelligence_label.setText(f"Intelligence: {self.game.intelligence}")
+        self.attack_label.setText(f"Attack: {self.game.attack}")
+        self.armor_label.setText(f"Armor: {self.game.armor}")
 
     def update_inventory(self):
         self.inventory_table.setRowCount(0)
@@ -174,6 +200,7 @@ class AdventureRPG(QMainWindow):
         self.game.equip_item(item_name)
         self.update_inventory()
         self.update_equipment()
+        self.update_labels()
 
     def toggle_state(self):
         self.game.is_traveling = not self.game.is_traveling
