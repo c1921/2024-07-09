@@ -7,13 +7,25 @@ INITIAL_THIRST = 100
 INITIAL_FATIGUE = 100
 INITIAL_MOOD = 100
 
-# 物品初始配置
+# 计时器触发间隔（毫秒）
+TIMER_INTERVAL = 1000  # 1秒
+
+# 初始背包物品配置
 INITIAL_INVENTORY = {
-    "苹果": {"type": "Food", "hunger_restore": 20, "thirst_restore": 10},
-    "剑": {"type": "Weapon", "attack": 10},
-    "盾牌": {"type": "Armor", "defense": 5},
-    "戒指": {"type": "Accessory", "effect": "魔法增强"},
-    "背包": {"type": "Backpack", "capacity": 50},
-    "马": {"type": "Mount", "speed_bonus": 20},
-    "马车": {"type": "Carriage", "capacity": 200, "speed_bonus": 10}
+    "Apple": 10,
+    "Blueberry": 15,
+    "Mulberry": 20,
+    "Sword": 1
+}
+
+# 游戏中所有物品定义
+ITEM_DEFINITIONS = {
+    "Food": {
+        "Apple": [20, 10, 0.5, 5],  # hunger_restore, thirst_restore, weight, value
+        "Blueberry": [10, 5, 0.1, 2],
+        "Mulberry": [15, 7, 0.2, 3]
+    },
+    "Weapon": {
+        "Sword": {"attack": 10, "weight": 5.0, "value": 100}
+    }
 }
