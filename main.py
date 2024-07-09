@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (
     QProgressBar, QMenu, QTextEdit, QAbstractItemView
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
+import config
 from game_logic import GameLogic
 from items import Food
 
@@ -86,7 +87,7 @@ class AdventureRPG(QMainWindow):
         # 设置计时器
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_time_and_distance)
-        self.timer.start(1000)  # 每秒触发一次
+        self.timer.start(config.TIMER_INTERVAL)  # 使用配置文件中的计时器间隔
 
         # 更新标签显示
         self.update_labels()

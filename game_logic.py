@@ -20,13 +20,16 @@ class GameLogic:
 
     def initialize_inventory(self):
         inventory = {}
-        for item_name, item_data in config.INITIAL_INVENTORY.items():
-            if item_data["type"] == "Food":
-                inventory[item_name] = Food(item_name, item_data["quantity"], item_data["hunger_restore"], item_data["thirst_restore"])
-            elif item_data["type"] == "Weapon":
-                inventory[item_name] = Weapon(item_name, item_data["quantity"], item_data["attack"])
-            elif item_data["type"] == "Armor":
-                inventory[item_name] = Armor(item_name, item_data["quantity"], item_data["defense"])
+        for item_name, quantity in config.INITIAL_INVENTORY.items():
+            for item_type, items in config.ITEM_DEFINITIONS.items():
+                if item_name in items:
+                    item_data = items[item_name]
+                    if item_type == "Food":
+                        hunger_restore, thirst_restore = item_data
+                        inventory[item_name] = Food(item_name, quantity, hunger_restore, thirst_restore)
+                    elif item_type == "Weapon":
+                        inventory[item_name] = Weapon(item_name, quantity, item_data["attack"])
+                    # 可根据需要添加其他类型
         return inventory
 
     def update_time_and_distance(self):
@@ -54,7 +57,8 @@ class GameLogic:
             if "Apple" in self.inventory:
                 self.inventory["Apple"].quantity += 1
             else:
-                self.inventory["Apple"] = Food("Apple", 1, hunger_restore=20, thirst_restore=10)
+                hunger_restore, thirst_restore = config.ITEM_DEFINITIONS["Food"]["Apple"]
+                self.inventory["Apple"] = Food("Apple", 1, hunger_restore, thirst_restore)
             self.log.append("You found an apple!")
     
     def discard_item(self, item_name):
