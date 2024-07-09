@@ -1,11 +1,11 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton,
-    QProgressBar, QMenu
+    QProgressBar, QMenu, QHBoxLayout
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
 from game_logic import GameLogic
-from items import Food
+from items import Food, Weapon, Armor, Accessory, Backpack, Mount, Carriage
 
 class AdventureRPG(QMainWindow):
     def __init__(self):
@@ -19,7 +19,7 @@ class AdventureRPG(QMainWindow):
 
         # 设置窗口
         self.setWindowTitle("Adventure RPG")
-        self.setGeometry(100, 100, 600, 400)
+        self.setGeometry(100, 100, 800, 600)
 
         # 创建标签
         self.time_label = QLabel(self)
@@ -31,7 +31,15 @@ class AdventureRPG(QMainWindow):
         self.inventory_table.setHorizontalHeaderLabels(["Item", "Quantity"])
         self.inventory_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.inventory_table.customContextMenuRequested.connect(self.show_context_menu)
+        self.inventory_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)  # 禁止编辑
         self.update_inventory()
+
+        # 创建装备栏表格
+        self.equipment_table = QTableWidget(self)
+        self.equipment_table.setColumnCount(2)
+        self.equipment_table.setHorizontalHeaderLabels(["Slot", "Item"])
+        self.equipment_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)  # 禁止编辑
+        self.update_equipment()
 
         # 创建角色状态进度条
         self.hunger_bar = QProgressBar(self)
@@ -65,11 +73,15 @@ class AdventureRPG(QMainWindow):
         state_layout.addWidget(self.fatigue_bar)
         state_layout.addWidget(self.mood_bar)
 
-        main_layout = QVBoxLayout()
+        inventory_layout = QVBoxLayout()
+        inventory_layout.addWidget(self.inventory_table)
+        inventory_layout.addWidget(self.equipment_table)
+
+        main_layout = QHBoxLayout()
+        main_layout.addLayout(inventory_layout)
+        main_layout.addLayout(state_layout)
         main_layout.addWidget(self.time_label)
         main_layout.addWidget(self.distance_label)
-        main_layout.addWidget(self.inventory_table)
-        main_layout.addLayout(state_layout)
         main_layout.addWidget(self.toggle_button)
 
         container = QWidget()
@@ -108,8 +120,28 @@ class AdventureRPG(QMainWindow):
         for item in self.game.inventory.values():
             row_position = self.inventory_table.rowCount()
             self.inventory_table.insertRow(row_position)
-            self.inventory_table.setItem(row_position, 0, QTableWidgetItem(item.name))
-            self.inventory_table.setItem(row_position, 1, QTableWidgetItem(str(item.quantity)))
+            item_name = QTableWidgetItem(item.name)
+            item_name.setFlags(item_name.flags() & ~Qt.ItemFlag.ItemIsEditable)  # 禁止编辑
+            item_name.setFlags(item_name.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # 禁止选中文字
+            item_quantity = QTableWidgetItem(str(item.quantity))
+            item_quantity.setFlags(item_quantity.flags() & ~Qt.ItemFlag.ItemIsEditable)  # 禁止编辑
+            item_quantity.setFlags(item_quantity.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # 禁止选中文字
+            self.inventory_table.setItem(row_position, 0, item_name)
+            self.inventory_table.setItem(row_position, 1, item_quantity)
+
+    def update_equipment(self):
+        self.equipment_table.setRowCount(0)
+        for slot, item in self.game.equipment.items():
+            row_position = self.equipment_table.rowCount()
+            self.equipment_table.insertRow(row_position)
+            slot_name = QTableWidgetItem(slot)
+            slot_name.setFlags(slot_name.flags() & ~Qt.ItemFlag.ItemIsEditable)  # 禁止编辑
+            slot_name.setFlags(slot_name.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # 禁止选中文字
+            item_name = QTableWidgetItem(item.name if item else "None")
+            item_name.setFlags(item_name.flags() & ~Qt.ItemFlag.ItemIsEditable)  # 禁止编辑
+            item_name.setFlags(item_name.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # 禁止选中文字
+            self.equipment_table.setItem(row_position, 0, slot_name)
+            self.equipment_table.setItem(row_position, 1, item_name)
 
     def show_context_menu(self, position):
         menu = QMenu()
@@ -123,6 +155,9 @@ class AdventureRPG(QMainWindow):
             if isinstance(item, Food):
                 eat_action = menu.addAction("Eat")
                 eat_action.triggered.connect(lambda: self.eat_item(item_name))
+            if isinstance(item, (Weapon, Armor, Accessory, Backpack, Mount, Carriage)):
+                equip_action = menu.addAction("Equip")
+                equip_action.triggered.connect(lambda: self.equip_item(item_name))
 
         menu.exec(self.inventory_table.viewport().mapToGlobal(position))
 
@@ -134,6 +169,11 @@ class AdventureRPG(QMainWindow):
         self.game.eat_item(item_name)
         self.update_inventory()
         self.update_labels()
+
+    def equip_item(self, item_name):
+        self.game.equip_item(item_name)
+        self.update_inventory()
+        self.update_equipment()
 
     def toggle_state(self):
         self.game.is_traveling = not self.game.is_traveling

@@ -1,6 +1,6 @@
 # game_logic.py
 
-from items import Item, Food, Armor, Weapon
+from items import Item, Food, Armor, Weapon, Accessory, Backpack, Mount, Carriage
 import config
 
 class GameLogic:
@@ -15,6 +15,14 @@ class GameLogic:
         self.day_count = 1
         self.distance = 0.0
         self.inventory = self.initialize_inventory()
+        self.equipment = {
+            "weapon": None,
+            "armor": None,
+            "accessory": None,
+            "backpack": None,
+            "mount": None,
+            "carriage": None
+        }
 
     def initialize_inventory(self):
         inventory = {}
@@ -25,6 +33,14 @@ class GameLogic:
                 inventory[item_name] = Weapon(item_name, item_data["quantity"], item_data["attack"])
             elif item_data["type"] == "Armor":
                 inventory[item_name] = Armor(item_name, item_data["quantity"], item_data["defense"])
+            elif item_data["type"] == "Accessory":
+                inventory[item_name] = Accessory(item_name, item_data["quantity"], item_data["effect"])
+            elif item_data["type"] == "Backpack":
+                inventory[item_name] = Backpack(item_name, item_data["quantity"], item_data["capacity"])
+            elif item_data["type"] == "Mount":
+                inventory[item_name] = Mount(item_name, item_data["quantity"], item_data["speed_bonus"])
+            elif item_data["type"] == "Carriage":
+                inventory[item_name] = Carriage(item_name, item_data["quantity"], item_data["capacity"], item_data["speed_bonus"])
         return inventory
 
     def update_time_and_distance(self):
@@ -57,3 +73,33 @@ class GameLogic:
             food.quantity -= 1
             if food.quantity <= 0:
                 del self.inventory[item_name]
+
+    def equip_item(self, item_name):
+        if item_name in self.inventory:
+            item = self.inventory[item_name]
+            if isinstance(item, Weapon):
+                self.equipment["weapon"] = item
+            elif isinstance(item, Armor):
+                self.equipment["armor"] = item
+            elif isinstance(item, Accessory):
+                self.equipment["accessory"] = item
+            elif isinstance(item, Backpack):
+                self.equipment["backpack"] = item
+            elif isinstance(item, Mount):
+                self.equipment["mount"] = item
+            elif isinstance(item, Carriage):
+                self.equipment["carriage"] = item
+            item.quantity -= 1
+            if item.quantity <= 0:
+                del self.inventory[item_name]
+
+    def unequip_item(self, slot):
+        if slot in self.equipment and self.equipment[slot] is not None:
+            item = self.equipment[slot]
+            item_name = item.name
+            if item_name in self.inventory:
+                self.inventory[item_name].quantity += 1
+            else:
+                self.inventory[item_name] = item
+                item.quantity = 1
+            self.equipment[slot] = None
