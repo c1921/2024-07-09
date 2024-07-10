@@ -1,7 +1,8 @@
 from PyQt6.QtWidgets import (
-    QLabel, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QAbstractItemView
+    QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QMenu, QAbstractItemView, QToolTip
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QEvent
+from items import Food
 
 class InventoryTab(QWidget):
     def __init__(self, game, show_context_menu):
@@ -17,6 +18,9 @@ class InventoryTab(QWidget):
         self.inventory_table.customContextMenuRequested.connect(self.show_context_menu)
         self.inventory_table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.inventory_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+
+        self.inventory_table.setMouseTracking(True)  # 启用鼠标跟踪
+        self.inventory_table.viewport().installEventFilter(self)  # 安装事件过滤器
 
         self.weight_label = QLabel(self)
         self.max_weight = 100  # 设置负重上限
@@ -53,3 +57,23 @@ class InventoryTab(QWidget):
 
     def update_value_label(self, total_value=0):
         self.weight_label.setText(self.weight_label.text() + f", Total Value: {total_value:.2f}")  # 格式化总价值
+
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.Type.ToolTip and source is self.inventory_table.viewport():
+            index = self.inventory_table.indexAt(event.pos())
+            if index.isValid():
+                item_name = self.inventory_table.item(index.row(), 0).text()
+                item = self.game.inventory[item_name]
+                if isinstance(item, Food):
+                    tooltip_text = (
+                        f"Name: {item.name}\n"
+                        f"Weight: {item.weight}\n"
+                        f"Value: {item.value}\n"
+                        f"Hunger Restore: {item.hunger_restore}\n"
+                        f"Thirst Restore: {item.thirst_restore}"
+                    )
+                    QToolTip.showText(event.globalPos(), tooltip_text)
+                else:
+                    QToolTip.hideText()
+                return True
+        return super().eventFilter(source, event)
