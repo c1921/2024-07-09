@@ -40,16 +40,16 @@ class InventoryTab(QWidget):
             self.inventory_table.setItem(row_position, 2, QTableWidgetItem(str(item.weight)))
             total_item_weight = item.weight * item.quantity
             total_item_value = item.value * item.quantity
-            self.inventory_table.setItem(row_position, 3, QTableWidgetItem(str(total_item_weight)))
+            self.inventory_table.setItem(row_position, 3, QTableWidgetItem(f"{total_item_weight:.2f}"))  # 格式化总重量
             self.inventory_table.setItem(row_position, 4, QTableWidgetItem(str(item.value)))
-            self.inventory_table.setItem(row_position, 5, QTableWidgetItem(str(total_item_value)))
+            self.inventory_table.setItem(row_position, 5, QTableWidgetItem(f"{total_item_value:.2f}"))  # 格式化总价值
             total_weight += total_item_weight
             total_value += total_item_value
         self.update_weight_label(total_weight)
         self.update_value_label(total_value)
 
     def update_weight_label(self, current_weight=0):
-        self.weight_label.setText(f"Weight: {current_weight} / {self.max_weight}")
+        self.weight_label.setText(f"Weight: {current_weight:.2f} / {self.max_weight}")  # 格式化当前负重
 
     def update_value_label(self, total_value=0):
-        self.weight_label.setText(self.weight_label.text() + f", Total Value: {total_value}")
+        self.weight_label.setText(self.weight_label.text() + f", Total Value: {total_value:.2f}")  # 格式化总价值
