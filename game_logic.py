@@ -1,8 +1,9 @@
 # game_logic.py
 
 import random
-from items import Item, Food, Armor, Weapon
+from items import Food, Weapon
 import config
+from PyQt6.QtCore import QTime
 
 class GameLogic:
     def __init__(self):
@@ -17,6 +18,7 @@ class GameLogic:
         self.distance = 0.0
         self.inventory = self.initialize_inventory()
         self.log = []
+        self.game_time = QTime(0, 0)  # 初始化时间
 
     def initialize_inventory(self):
         inventory = {}
