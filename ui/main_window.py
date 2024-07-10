@@ -1,10 +1,9 @@
-from tkinter import Menu
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu
 from PyQt6.QtCore import QTimer
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget
-from items import Food
 from ui.travel_tab import TravelTab
 from ui.inventory_tab import InventoryTab
 import config
+from items import Food
 
 class MainWindow(QMainWindow):
     def __init__(self, game):
@@ -58,10 +57,10 @@ class MainWindow(QMainWindow):
         self.travel_tab.toggle_button.setText("Travel" if not self.game.is_traveling else "Rest")
 
     def show_context_menu(self, position):
-        menu = Menu()
-        row = self.inventory_table.currentRow()
+        menu = QMenu()
+        row = self.inventory_tab.inventory_table.currentRow()  # 引用inventory_tab中的inventory_table
         if row >= 0:
-            item_name = self.inventory_table.item(row, 0).text()
+            item_name = self.inventory_tab.inventory_table.item(row, 0).text()  # 引用inventory_tab中的inventory_table
             item = self.game.inventory[item_name]
 
             if isinstance(item, Food):
@@ -71,7 +70,7 @@ class MainWindow(QMainWindow):
             discard_action = menu.addAction("Discard")
             discard_action.triggered.connect(lambda: self.discard_item(item_name))
 
-        menu.exec(self.inventory_table.viewport().mapToGlobal(position))
+        menu.exec(self.inventory_tab.inventory_table.viewport().mapToGlobal(position))  # 引用inventory_tab中的inventory_table
 
     def discard_item(self, item_name):
         self.game.discard_item(item_name)
