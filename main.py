@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton,
-    QProgressBar, QMenu, QTextEdit, QAbstractItemView
+    QProgressBar, QMenu, QTextEdit, QAbstractItemView, QTabWidget
 )
 from PyQt6.QtCore import QTimer, QTime, Qt
 from game_logic import GameLogic
@@ -22,21 +22,17 @@ class AdventureRPG(QMainWindow):
         self.setWindowTitle("Adventure RPG")
         self.setGeometry(100, 100, 600, 400)
 
-        # 创建标签
+        # 创建标签页
+        self.tabs = QTabWidget(self)
+        self.travel_tab = QWidget()
+        self.inventory_tab = QWidget()
+        self.tabs.addTab(self.travel_tab, "Travel")
+        self.tabs.addTab(self.inventory_tab, "Inventory")
+
+        # 创建旅行标签页内容
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
 
-        # 创建物品栏表格
-        self.inventory_table = QTableWidget(self)
-        self.inventory_table.setColumnCount(4)
-        self.inventory_table.setHorizontalHeaderLabels(["Item", "Quantity", "Weight", "Value"])
-        self.inventory_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.inventory_table.customContextMenuRequested.connect(self.show_context_menu)
-        self.inventory_table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  # 禁止选中
-        self.inventory_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)  # 禁止编辑
-        self.update_inventory()
-
-        # 创建角色状态进度条
         self.hunger_bar = QProgressBar(self)
         self.hunger_bar.setMaximum(100)
         self.hunger_bar.setValue(int(self.game.hunger))
@@ -57,7 +53,6 @@ class AdventureRPG(QMainWindow):
         self.mood_bar.setValue(int(self.game.mood))
         self.mood_bar.setFormat("Mood: %p%")
 
-        # 创建按钮
         self.toggle_button = QPushButton("Rest", self)
         self.toggle_button.clicked.connect(self.toggle_state)
 
@@ -65,20 +60,40 @@ class AdventureRPG(QMainWindow):
         self.log_text = QTextEdit(self)
         self.log_text.setReadOnly(True)
 
-        # 布局
-        state_layout = QVBoxLayout()
-        state_layout.addWidget(self.hunger_bar)
-        state_layout.addWidget(self.thirst_bar)
-        state_layout.addWidget(self.fatigue_bar)
-        state_layout.addWidget(self.mood_bar)
+        travel_layout = QVBoxLayout()
+        travel_layout.addWidget(self.time_label)
+        travel_layout.addWidget(self.distance_label)
+        travel_layout.addWidget(self.hunger_bar)
+        travel_layout.addWidget(self.thirst_bar)
+        travel_layout.addWidget(self.fatigue_bar)
+        travel_layout.addWidget(self.mood_bar)
+        travel_layout.addWidget(self.toggle_button)
+        travel_layout.addWidget(self.log_text)
 
+        self.travel_tab.setLayout(travel_layout)
+
+        # 创建物品标签页内容
+        self.inventory_table = QTableWidget(self)
+        self.inventory_table.setColumnCount(4)
+        self.inventory_table.setHorizontalHeaderLabels(["Item", "Quantity", "Weight", "Value"])
+        self.inventory_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.inventory_table.customContextMenuRequested.connect(self.show_context_menu)
+        self.inventory_table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  # 禁止选中
+        self.inventory_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)  # 禁止编辑
+
+        self.weight_label = QLabel(self)
+        self.max_weight = 100  # 设置负重上限
+        self.update_weight_label()
+
+        inventory_layout = QVBoxLayout()
+        inventory_layout.addWidget(self.inventory_table)
+        inventory_layout.addWidget(self.weight_label)
+
+        self.inventory_tab.setLayout(inventory_layout)
+
+        # 创建主布局
         main_layout = QVBoxLayout()
-        main_layout.addWidget(self.time_label)
-        main_layout.addWidget(self.distance_label)
-        main_layout.addWidget(self.inventory_table)
-        main_layout.addLayout(state_layout)
-        main_layout.addWidget(self.toggle_button)
-        main_layout.addWidget(self.log_text)
+        main_layout.addWidget(self.tabs)
 
         container = QWidget()
         container.setLayout(main_layout)
@@ -115,6 +130,7 @@ class AdventureRPG(QMainWindow):
 
     def update_inventory(self):
         self.inventory_table.setRowCount(0)
+        total_weight = 0
         for item in self.game.inventory.values():
             row_position = self.inventory_table.rowCount()
             self.inventory_table.insertRow(row_position)
@@ -122,6 +138,11 @@ class AdventureRPG(QMainWindow):
             self.inventory_table.setItem(row_position, 1, QTableWidgetItem(str(item.quantity)))
             self.inventory_table.setItem(row_position, 2, QTableWidgetItem(str(item.weight)))
             self.inventory_table.setItem(row_position, 3, QTableWidgetItem(str(item.value)))
+            total_weight += item.weight * item.quantity
+        self.update_weight_label(total_weight)
+
+    def update_weight_label(self, current_weight=0):
+        self.weight_label.setText(f"Weight: {current_weight} / {self.max_weight}")
 
     def update_log(self):
         self.log_text.clear()
