@@ -10,7 +10,7 @@ from character import Character
 class SaveManager:
     def __init__(self, game):
         self.game = game
-        self.save_file = "game_save.json"
+        self.save_file = "save.json"
 
     def save_game(self):
         save_data = {

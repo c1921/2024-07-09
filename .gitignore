@@ -129,3 +129,5 @@ instance/
 # Windows
 Thumbs.db
 ehthumbs.db
+
+save.json
