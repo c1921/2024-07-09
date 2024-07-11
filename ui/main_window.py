@@ -43,6 +43,11 @@ class MainWindow(QMainWindow):
         self.update_inventory()
         self.update_log()
 
+        # 更新同路人
+        for companion in self.game.companions:
+            self.travel_tab.update_companions(companion)
+        self.game.companions = []  # 清空已处理的同路人列表
+
     def update_labels(self):
         self.travel_tab.update_labels()
 

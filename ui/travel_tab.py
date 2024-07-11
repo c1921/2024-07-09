@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import (
-    QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit
+    QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget
 )
+from PyQt6.QtCore import Qt
 
 class TravelTab(QWidget):
     def __init__(self, game, toggle_state):
@@ -38,6 +39,9 @@ class TravelTab(QWidget):
         self.log_text = QTextEdit(self)
         self.log_text.setReadOnly(True)
 
+        # 同路人列表
+        self.companions_list = QListWidget(self)
+
         travel_layout = QVBoxLayout()
         travel_layout.addWidget(self.time_label)
         travel_layout.addWidget(self.distance_label)
@@ -47,6 +51,8 @@ class TravelTab(QWidget):
         travel_layout.addWidget(self.mood_bar)
         travel_layout.addWidget(self.toggle_button)
         travel_layout.addWidget(self.log_text)
+        travel_layout.addWidget(QLabel("Companions:"))  # 标签
+        travel_layout.addWidget(self.companions_list)
 
         self.setLayout(travel_layout)
 
@@ -64,3 +70,6 @@ class TravelTab(QWidget):
     def update_log(self):
         self.log_text.clear()
         self.log_text.append("\n".join(self.game.log))
+
+    def update_companions(self, companion):
+        self.companions_list.addItem(f"{companion.name}: Strength {companion.attributes['Strength']}, Agility {companion.attributes['Agility']}, Charisma {companion.attributes['Charisma']}, Intelligence {companion.attributes['Intelligence']}")

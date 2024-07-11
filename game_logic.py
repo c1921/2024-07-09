@@ -1,13 +1,14 @@
-# game_logic.py
-
 import random
-from items import Food, Weapon
+from items import Item, Food, Armor, Weapon
+from character import Character
 import config
 from PyQt6.QtCore import QTime
 
 class GameLogic:
     def __init__(self):
         # 初始化游戏状态
+        self.character = Character("Hero")  # 初始化角色
+        self.companions = []  # 同路人列表
         self.speed_per_minute = config.SPEED_PER_MINUTE
         self.hunger = config.INITIAL_HUNGER
         self.thirst = config.INITIAL_THIRST
@@ -65,7 +66,13 @@ class GameLogic:
                 hunger_restore, thirst_restore, weight, value = config.ITEM_DEFINITIONS["Food"]["Apple"]
                 self.inventory["Apple"] = Food("Apple", 1, hunger_restore, thirst_restore, weight, value)
             self.log.append("You found an apple!")
-    
+        
+        # 10%概率遇到新角色
+        if random.random() < 0.1:
+            new_companion = Character.random_character()
+            self.companions.append(new_companion)
+            self.log.append(f"You met {new_companion.name}!")
+
     def discard_item(self, item_name):
         if item_name in self.inventory:
             del self.inventory[item_name]
