@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import (
-    QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget, QHBoxLayout, QComboBox
+    QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget, QHBoxLayout, QComboBox, QListWidgetItem
 )
 from PyQt6.QtCore import Qt
 
@@ -13,7 +13,8 @@ class TravelTab(QWidget):
         self.toggle_pause = toggle_pause
         self.show_character_details = show_character_details
 
-        self.character_name_label = QLabel(f"Player: {self.game.character.name}", self)  # 显示玩家角色名字
+        self.name_label = QLabel(self)
+        self.name_label.setText(f"Player: {self.game.character.name}")
 
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
@@ -52,7 +53,7 @@ class TravelTab(QWidget):
         self.log_text.setReadOnly(True)
 
         self.companions_list = QListWidget(self)
-        self.companions_list.itemClicked.connect(self.show_character_details)  # 点击同路人显示详情
+        self.companions_list.itemClicked.connect(self.on_companion_clicked)
 
         control_layout = QHBoxLayout()
         control_layout.addWidget(self.toggle_button)
@@ -60,7 +61,7 @@ class TravelTab(QWidget):
         control_layout.addWidget(self.speed_combo)
 
         travel_layout = QVBoxLayout()
-        travel_layout.addWidget(self.character_name_label)  # 添加玩家角色名字标签
+        travel_layout.addWidget(self.name_label)
         travel_layout.addWidget(self.time_label)
         travel_layout.addWidget(self.distance_label)
         travel_layout.addWidget(self.hunger_bar)
@@ -69,7 +70,7 @@ class TravelTab(QWidget):
         travel_layout.addWidget(self.mood_bar)
         travel_layout.addLayout(control_layout)
         travel_layout.addWidget(self.log_text)
-        travel_layout.addWidget(QLabel("Companions:"))  # 标签
+        travel_layout.addWidget(QLabel("Companions:"))
         travel_layout.addWidget(self.companions_list)
 
         self.setLayout(travel_layout)
@@ -92,4 +93,12 @@ class TravelTab(QWidget):
     def update_companions(self):
         self.companions_list.clear()
         for companion in self.game.companions:
-            self.companions_list.addItem(companion.name)
+            item = QListWidgetItem(companion.name)
+            item.setData(Qt.ItemDataRole.UserRole, companion.id)
+            self.companions_list.addItem(item)
+
+    def on_companion_clicked(self, item):
+        companion_id = item.data(Qt.ItemDataRole.UserRole)
+        companion = next((comp for comp in self.game.companions if comp.id == companion_id), None)
+        if companion:
+            self.show_character_details(companion)

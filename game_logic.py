@@ -6,8 +6,8 @@ from PyQt6.QtCore import QTime
 
 class GameLogic:
     def __init__(self):
-        # 初始化游戏状态
-        self.character = Character("Hero")  # 初始化角色
+        self.character = Character("Hero")
+        self.companions = []
         self.speed_per_minute = config.SPEED_PER_MINUTE
         self.hunger = config.INITIAL_HUNGER
         self.thirst = config.INITIAL_THIRST
@@ -18,8 +18,7 @@ class GameLogic:
         self.distance = 0.0
         self.inventory = self.initialize_inventory()
         self.log = []
-        self.game_time = QTime(0, 0)  # 初始化时间
-        self.companions = []  # 新增同路人列表
+        self.game_time = QTime(0, 0)
 
     def initialize_inventory(self):
         inventory = {}
@@ -35,7 +34,6 @@ class GameLogic:
                         weight = item_data["weight"]
                         value = item_data["value"]
                         inventory[item_name] = Weapon(item_name, quantity, attack, weight, value)
-                    # 可根据需要添加其他类型
         return inventory
 
     def update_time_and_distance(self):
@@ -58,16 +56,6 @@ class GameLogic:
         self.mood = max(self.mood, 0)
 
     def random_event(self):
-        # 50%概率获得一个苹果
-        if random.random() < 0.5:
-            if "Apple" in self.inventory:
-                self.inventory["Apple"].quantity += 1
-            else:
-                hunger_restore, thirst_restore, weight, value = config.ITEM_DEFINITIONS["Food"]["Apple"]
-                self.inventory["Apple"] = Food("Apple", 1, hunger_restore, thirst_restore, weight, value)
-            self.log.append("You found an apple!")
-        
-        # 10%概率遇到新角色
         if random.random() < 0.1:
             new_companion = Character.random_character()
             self.companions.append(new_companion)

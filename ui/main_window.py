@@ -1,8 +1,9 @@
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QLabel
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QSplitter
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QKeySequence, QShortcut
 from ui.travel_tab import TravelTab
 from ui.inventory_tab import InventoryTab
+from ui.character_details import CharacterDetails
 from shortcuts import Shortcuts
 import config
 from items import Food
@@ -12,23 +13,28 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.game = game
-        self.timer_speed = config.TIMER_INTERVAL  # 初始时间间隔
+        self.timer_speed = config.TIMER_INTERVAL
         self.is_paused = False
 
         self.setWindowTitle("Adventure RPG")
-        self.setGeometry(100, 100, 800, 600)  # 增加窗口大小以适应新布局
+        self.setGeometry(100, 100, 800, 600)
+
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
 
         self.tabs = QTabWidget(self)
         self.travel_tab = TravelTab(self.game, self.toggle_state, self.change_speed, self.toggle_pause, self.show_character_details)
         self.inventory_tab = InventoryTab(self.game, self.show_context_menu)
-        self.character_details = QLabel("Character details will be shown here", self)  # 新增角色详情标签
-
         self.tabs.addTab(self.travel_tab, "Travel")
         self.tabs.addTab(self.inventory_tab, "Inventory")
 
+        self.character_details = CharacterDetails()
+
+        self.splitter.addWidget(self.tabs)
+        self.splitter.addWidget(self.character_details)
+        self.splitter.setSizes([500, 300])
+
         main_layout = QVBoxLayout()
-        main_layout.addWidget(self.tabs)
-        main_layout.addWidget(self.character_details)  # 添加角色详情标签
+        main_layout.addWidget(self.splitter)
 
         container = QWidget()
         container.setLayout(main_layout)
@@ -65,7 +71,7 @@ class MainWindow(QMainWindow):
             self.update_labels()
             self.update_inventory()
             self.update_log()
-            self.update_companions()
+            self.travel_tab.update_companions()
 
     def update_labels(self):
         self.travel_tab.update_labels()
@@ -75,9 +81,6 @@ class MainWindow(QMainWindow):
 
     def update_log(self):
         self.travel_tab.update_log()
-
-    def update_companions(self):
-        self.travel_tab.update_companions()
 
     def toggle_state(self):
         self.game.is_traveling = not self.game.is_traveling
@@ -96,9 +99,9 @@ class MainWindow(QMainWindow):
 
     def show_context_menu(self, position):
         menu = QMenu()
-        row = self.inventory_tab.inventory_table.currentRow()  # 引用inventory_tab中的inventory_table
+        row = self.inventory_tab.inventory_table.currentRow()
         if row >= 0:
-            item_name = self.inventory_tab.inventory_table.item(row, 0).text()  # 引用inventory_tab中的inventory_table
+            item_name = self.inventory_tab.inventory_table.item(row, 0).text()
             item = self.game.inventory[item_name]
 
             if isinstance(item, Food):
@@ -108,7 +111,7 @@ class MainWindow(QMainWindow):
             discard_action = menu.addAction("Discard")
             discard_action.triggered.connect(lambda: self.discard_item(item_name))
 
-        menu.exec(self.inventory_tab.inventory_table.viewport().mapToGlobal(position))  # 引用inventory_tab中的inventory_table
+        menu.exec(self.inventory_tab.inventory_table.viewport().mapToGlobal(position))
 
     def discard_item(self, item_name):
         self.game.discard_item(item_name)
@@ -121,22 +124,5 @@ class MainWindow(QMainWindow):
         self.update_labels()
         self.update_log()
 
-    def show_character_details(self, item):
-        character_name = item.text()
-        for companion in self.game.companions:
-            if companion.name == character_name:
-                details = (
-                    f"Name: {companion.name}\n"
-                    f"Strength: {companion.attributes['Strength']}\n"
-                    f"Agility: {companion.attributes['Agility']}\n"
-                    f"Charisma: {companion.attributes['Charisma']}\n"
-                    f"Intelligence: {companion.attributes['Intelligence']}\n"
-                    f"Skills:\n"
-                    f"  Running: {companion.skills['Running']}\n"
-                    f"  Riding: {companion.skills['Riding']}\n"
-                    f"  Management: {companion.skills['Management']}\n"
-                    f"  Eloquence: {companion.skills['Eloquence']}\n"
-                    f"  Gathering: {companion.skills['Gathering']}\n"
-                )
-                self.character_details.setText(details)
-                break
+    def show_character_details(self, character):
+        self.character_details.update_details(character)

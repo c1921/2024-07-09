@@ -1,9 +1,9 @@
-# character.py
-
 import random
+import uuid
 
 class Character:
     def __init__(self, name):
+        self.id = uuid.uuid4()
         self.name = name
         self.inventory = {}
         self.attributes = {
