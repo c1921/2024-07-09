@@ -1,14 +1,16 @@
 from PyQt6.QtWidgets import (
-    QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget
+    QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget, QHBoxLayout, QComboBox
 )
 from PyQt6.QtCore import Qt
 
 class TravelTab(QWidget):
-    def __init__(self, game, toggle_state):
+    def __init__(self, game, toggle_state, change_speed, toggle_pause):
         super().__init__()
 
         self.game = game
         self.toggle_state = toggle_state
+        self.change_speed = change_speed
+        self.toggle_pause = toggle_pause
 
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
@@ -36,11 +38,23 @@ class TravelTab(QWidget):
         self.toggle_button = QPushButton("Rest", self)
         self.toggle_button.clicked.connect(self.toggle_state)
 
+        self.pause_button = QPushButton("Pause", self)
+        self.pause_button.clicked.connect(self.toggle_pause)
+
+        self.speed_combo = QComboBox(self)
+        self.speed_combo.addItems(["1x", "2x", "5x", "10x"])
+        self.speed_combo.currentIndexChanged.connect(lambda index: self.change_speed(index, update_combo=False))
+
         self.log_text = QTextEdit(self)
         self.log_text.setReadOnly(True)
 
         # 同路人列表
         self.companions_list = QListWidget(self)
+
+        control_layout = QHBoxLayout()
+        control_layout.addWidget(self.toggle_button)
+        control_layout.addWidget(self.pause_button)
+        control_layout.addWidget(self.speed_combo)
 
         travel_layout = QVBoxLayout()
         travel_layout.addWidget(self.time_label)
@@ -49,7 +63,7 @@ class TravelTab(QWidget):
         travel_layout.addWidget(self.thirst_bar)
         travel_layout.addWidget(self.fatigue_bar)
         travel_layout.addWidget(self.mood_bar)
-        travel_layout.addWidget(self.toggle_button)
+        travel_layout.addLayout(control_layout)
         travel_layout.addWidget(self.log_text)
         travel_layout.addWidget(QLabel("Companions:"))  # 标签
         travel_layout.addWidget(self.companions_list)
