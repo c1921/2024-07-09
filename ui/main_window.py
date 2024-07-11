@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QSplitter
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QKeySequence, QShortcut
+from save_manager import SaveManager
 from ui.travel_tab import TravelTab
 from ui.inventory_tab import InventoryTab
 from ui.character_details import CharacterDetails
@@ -11,10 +12,11 @@ from items import Food
 class MainWindow(QMainWindow):
     def __init__(self, game):
         super().__init__()
-
+        
         self.game = game
         self.timer_speed = config.TIMER_INTERVAL
         self.is_paused = False
+        self.save_manager = SaveManager(self.game)  # 添加保存管理器
 
         self.setWindowTitle("Adventure RPG")
         self.setGeometry(100, 100, 800, 600)
@@ -44,9 +46,17 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(self.update_time_and_distance)
         self.timer.start(self.timer_speed)
 
-        self.update_labels()
+        self.save_timer = QTimer(self)  # 添加定时存档计时器
+        self.save_timer.timeout.connect(self.save_manager.save_game)
+        self.save_timer.start(120000)  # 每2分钟存档一次
 
+        self.update_labels()
         self.setup_shortcuts()
+        self.save_manager.load_game()  # 启动时加载存档
+
+    def closeEvent(self, event):
+        self.save_manager.save_game()  # 关闭时存档
+        event.accept()
 
     def setup_shortcuts(self):
         QShortcut(Shortcuts.PAUSE_CONTINUE, self).activated.connect(self.toggle_pause)
