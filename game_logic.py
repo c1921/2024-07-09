@@ -8,7 +8,6 @@ class GameLogic:
     def __init__(self):
         # 初始化游戏状态
         self.character = Character("Hero")  # 初始化角色
-        self.companions = []  # 同路人列表
         self.speed_per_minute = config.SPEED_PER_MINUTE
         self.hunger = config.INITIAL_HUNGER
         self.thirst = config.INITIAL_THIRST
@@ -20,6 +19,7 @@ class GameLogic:
         self.inventory = self.initialize_inventory()
         self.log = []
         self.game_time = QTime(0, 0)  # 初始化时间
+        self.companions = []  # 新增同路人列表
 
     def initialize_inventory(self):
         inventory = {}

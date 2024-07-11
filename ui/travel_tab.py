@@ -4,13 +4,16 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 
 class TravelTab(QWidget):
-    def __init__(self, game, toggle_state, change_speed, toggle_pause):
+    def __init__(self, game, toggle_state, change_speed, toggle_pause, show_character_details):
         super().__init__()
 
         self.game = game
         self.toggle_state = toggle_state
         self.change_speed = change_speed
         self.toggle_pause = toggle_pause
+        self.show_character_details = show_character_details
+
+        self.character_name_label = QLabel(f"Player: {self.game.character.name}", self)  # 显示玩家角色名字
 
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
@@ -48,8 +51,8 @@ class TravelTab(QWidget):
         self.log_text = QTextEdit(self)
         self.log_text.setReadOnly(True)
 
-        # 同路人列表
         self.companions_list = QListWidget(self)
+        self.companions_list.itemClicked.connect(self.show_character_details)  # 点击同路人显示详情
 
         control_layout = QHBoxLayout()
         control_layout.addWidget(self.toggle_button)
@@ -57,6 +60,7 @@ class TravelTab(QWidget):
         control_layout.addWidget(self.speed_combo)
 
         travel_layout = QVBoxLayout()
+        travel_layout.addWidget(self.character_name_label)  # 添加玩家角色名字标签
         travel_layout.addWidget(self.time_label)
         travel_layout.addWidget(self.distance_label)
         travel_layout.addWidget(self.hunger_bar)
@@ -85,5 +89,7 @@ class TravelTab(QWidget):
         self.log_text.clear()
         self.log_text.append("\n".join(self.game.log))
 
-    def update_companions(self, companion):
-        self.companions_list.addItem(f"{companion.name}: Strength {companion.attributes['Strength']}, Agility {companion.attributes['Agility']}, Charisma {companion.attributes['Charisma']}, Intelligence {companion.attributes['Intelligence']}")
+    def update_companions(self):
+        self.companions_list.clear()
+        for companion in self.game.companions:
+            self.companions_list.addItem(companion.name)

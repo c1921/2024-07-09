@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QLabel
 from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QKeySequence, QShortcut
 from ui.travel_tab import TravelTab
@@ -16,16 +16,19 @@ class MainWindow(QMainWindow):
         self.is_paused = False
 
         self.setWindowTitle("Adventure RPG")
-        self.setGeometry(100, 100, 600, 400)
+        self.setGeometry(100, 100, 800, 600)  # 增加窗口大小以适应新布局
 
         self.tabs = QTabWidget(self)
-        self.travel_tab = TravelTab(self.game, self.toggle_state, self.change_speed, self.toggle_pause)
+        self.travel_tab = TravelTab(self.game, self.toggle_state, self.change_speed, self.toggle_pause, self.show_character_details)
         self.inventory_tab = InventoryTab(self.game, self.show_context_menu)
+        self.character_details = QLabel("Character details will be shown here", self)  # 新增角色详情标签
+
         self.tabs.addTab(self.travel_tab, "Travel")
         self.tabs.addTab(self.inventory_tab, "Inventory")
 
         main_layout = QVBoxLayout()
         main_layout.addWidget(self.tabs)
+        main_layout.addWidget(self.character_details)  # 添加角色详情标签
 
         container = QWidget()
         container.setLayout(main_layout)
@@ -62,11 +65,7 @@ class MainWindow(QMainWindow):
             self.update_labels()
             self.update_inventory()
             self.update_log()
-
-            # 更新同路人
-            for companion in self.game.companions:
-                self.travel_tab.update_companions(companion)
-            self.game.companions = []  # 清空已处理的同路人列表
+            self.update_companions()
 
     def update_labels(self):
         self.travel_tab.update_labels()
@@ -76,6 +75,9 @@ class MainWindow(QMainWindow):
 
     def update_log(self):
         self.travel_tab.update_log()
+
+    def update_companions(self):
+        self.travel_tab.update_companions()
 
     def toggle_state(self):
         self.game.is_traveling = not self.game.is_traveling
@@ -118,3 +120,23 @@ class MainWindow(QMainWindow):
         self.update_inventory()
         self.update_labels()
         self.update_log()
+
+    def show_character_details(self, item):
+        character_name = item.text()
+        for companion in self.game.companions:
+            if companion.name == character_name:
+                details = (
+                    f"Name: {companion.name}\n"
+                    f"Strength: {companion.attributes['Strength']}\n"
+                    f"Agility: {companion.attributes['Agility']}\n"
+                    f"Charisma: {companion.attributes['Charisma']}\n"
+                    f"Intelligence: {companion.attributes['Intelligence']}\n"
+                    f"Skills:\n"
+                    f"  Running: {companion.skills['Running']}\n"
+                    f"  Riding: {companion.skills['Riding']}\n"
+                    f"  Management: {companion.skills['Management']}\n"
+                    f"  Eloquence: {companion.skills['Eloquence']}\n"
+                    f"  Gathering: {companion.skills['Gathering']}\n"
+                )
+                self.character_details.setText(details)
+                break
