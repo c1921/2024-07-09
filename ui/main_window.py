@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
             self.update_labels()
             self.update_inventory()
             self.update_log()
-            self.travel_tab.update_companions()
+            self.travel_tab.update_companions(self.game.companions)
 
     def update_labels(self):
         self.travel_tab.update_labels()
