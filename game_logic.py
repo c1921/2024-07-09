@@ -3,6 +3,7 @@ from items import Item, Food, Armor, Weapon
 from character import Character
 import config
 from PyQt6.QtCore import QTime
+from events import EventManager  # 导入事件管理器
 
 class GameLogic:
     def __init__(self):
@@ -19,6 +20,8 @@ class GameLogic:
         self.inventory = self.initialize_inventory()
         self.log = []
         self.game_time = QTime(0, 0)
+
+        self.event_manager = EventManager(self)  # 创建事件管理器实例
 
     def initialize_inventory(self):
         inventory = {}
@@ -43,7 +46,7 @@ class GameLogic:
             self.hunger -= 0.2
             self.fatigue -= 0.5
             self.mood -= 0.1
-            self.random_event()
+            self.event_manager.trigger_random_event()  # 触发随机事件
         else:
             self.thirst -= 0.01
             self.hunger -= 0.02
@@ -54,12 +57,6 @@ class GameLogic:
         self.hunger = max(self.hunger, 0)
         self.fatigue = max(self.fatigue, 0)
         self.mood = max(self.mood, 0)
-
-    def random_event(self):
-        if random.random() < 0.1:
-            new_companion = Character.random_character()
-            self.companions.append(new_companion)
-            self.log.append(f"You met {new_companion.name}!")
 
     def discard_item(self, item_name):
         if item_name in self.inventory:

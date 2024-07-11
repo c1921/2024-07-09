@@ -1,5 +1,3 @@
-# config.py
-
 # 游戏配置常量
 SPEED_PER_MINUTE = 80  # 每分钟80米
 INITIAL_HUNGER = 100
