@@ -1,0 +1,41 @@
+{
+    "Food": {
+        "Apple": {
+            "hunger_restore": 20,
+            "thirst_restore": 10,
+            "weight": 0.5,
+            "value": 5
+        },
+        "Blueberry": {
+            "hunger_restore": 10,
+            "thirst_restore": 5,
+            "weight": 0.1,
+            "value": 2
+        },
+        "Mulberry": {
+            "hunger_restore": 15,
+            "thirst_restore": 7,
+            "weight": 0.2,
+            "value": 3
+        }
+    },
+    "Weapon": {
+        "Sword": {
+            "attack": 10,
+            "weight": 5.0,
+            "value": 100
+        }
+    },
+    "Armor": {
+        "Shield": {
+            "defense": 10,
+            "weight": 6.0,
+            "value": 80
+        },
+        "Helmet": {
+            "defense": 5,
+            "weight": 3.0,
+            "value": 50
+        }
+    }
+}

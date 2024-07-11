@@ -3,7 +3,7 @@ from items import Item, Food, Armor, Weapon
 from character import Character
 import config
 from PyQt6.QtCore import QTime
-from events import EventManager  # 导入事件管理器
+from events import EventManager
 
 class GameLogic:
     def __init__(self):
@@ -21,7 +21,7 @@ class GameLogic:
         self.log = []
         self.game_time = QTime(0, 0)
 
-        self.event_manager = EventManager(self)  # 创建事件管理器实例
+        self.event_manager = EventManager(self)
 
     def initialize_inventory(self):
         inventory = {}
@@ -30,13 +30,21 @@ class GameLogic:
                 if item_name in items:
                     item_data = items[item_name]
                     if item_type == "Food":
-                        hunger_restore, thirst_restore, weight, value = item_data
+                        hunger_restore = item_data["hunger_restore"]
+                        thirst_restore = item_data["thirst_restore"]
+                        weight = item_data["weight"]
+                        value = item_data["value"]
                         inventory[item_name] = Food(item_name, quantity, hunger_restore, thirst_restore, weight, value)
                     elif item_type == "Weapon":
                         attack = item_data["attack"]
                         weight = item_data["weight"]
                         value = item_data["value"]
                         inventory[item_name] = Weapon(item_name, quantity, attack, weight, value)
+                    elif item_type == "Armor":
+                        defense = item_data["defense"]
+                        weight = item_data["weight"]
+                        value = item_data["value"]
+                        inventory[item_name] = Armor(item_name, quantity, defense, weight, value)
         return inventory
 
     def update_time_and_distance(self):
@@ -46,7 +54,7 @@ class GameLogic:
             self.hunger -= 0.2
             self.fatigue -= 0.5
             self.mood -= 0.1
-            self.event_manager.trigger_random_event()  # 触发随机事件
+            self.event_manager.trigger_random_event()
         else:
             self.thirst -= 0.01
             self.hunger -= 0.02
