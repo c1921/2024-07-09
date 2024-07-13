@@ -102,7 +102,7 @@
     <name>MainWindow</name>
     <message>
       <location filename="..\ui\main_window.py" line="21" />
-      <source>Drifting</source>
+      <source>Adventure RPG</source>
       <translation type="unfinished" />
     </message>
     <message>

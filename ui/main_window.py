@@ -1,11 +1,10 @@
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QSplitter, QApplication
-from PyQt6.QtCore import QTimer, Qt, QCoreApplication, QTranslator
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QSplitter
+from PyQt6.QtCore import QTimer, Qt, QCoreApplication
 from PyQt6.QtGui import QKeySequence, QShortcut
 from save_manager import SaveManager
 from ui.travel_tab import TravelTab
 from ui.inventory_tab import InventoryTab
 from ui.character_details import CharacterDetails
-from ui.settings_tab import SettingsTab
 from shortcuts import Shortcuts
 import config
 from items import Food
@@ -19,7 +18,7 @@ class MainWindow(QMainWindow):
         self.is_paused = False
         self.save_manager = SaveManager(self.game)
 
-        self.setWindowTitle(QCoreApplication.translate("MainWindow", "Drifting"))
+        self.setWindowTitle(QCoreApplication.translate("MainWindow", "Adventure RPG"))
         self.setGeometry(100, 100, 800, 600)
 
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
@@ -27,11 +26,8 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget(self)
         self.travel_tab = TravelTab(self.game, self.toggle_state, self.change_speed, self.toggle_pause, self.show_character_details)
         self.inventory_tab = InventoryTab(self.game, self.show_context_menu)
-        self.settings_tab = SettingsTab(self)
-
         self.tabs.addTab(self.travel_tab, QCoreApplication.translate("MainWindow", "Travel"))
         self.tabs.addTab(self.inventory_tab, QCoreApplication.translate("MainWindow", "Inventory"))
-        self.tabs.addTab(self.settings_tab, QCoreApplication.translate("MainWindow", "Settings"))
 
         self.character_details = CharacterDetails()
 
@@ -57,7 +53,6 @@ class MainWindow(QMainWindow):
         self.update_labels()
         self.setup_shortcuts()
         self.save_manager.load_game()
-        self.load_language_setting()
 
     def closeEvent(self, event):
         self.save_manager.save_game()
@@ -141,35 +136,3 @@ class MainWindow(QMainWindow):
 
     def show_character_details(self, character):
         self.character_details.update_details(character)
-
-    def set_language(self, language):
-        self.language = language
-        with open('language_setting.txt', 'w') as f:
-            f.write(language)
-        self.load_translator(language)
-        self.retranslate_ui()
-
-    def load_language_setting(self):
-        try:
-            with open('language_setting.txt', 'r') as f:
-                self.language = f.read().strip()
-                self.load_translator(self.language)
-        except FileNotFoundError:
-            self.language = 'en'
-            self.load_translator(self.language)
-
-    def load_translator(self, language):
-        translator = QTranslator()
-        translation_file = f"translations/{language}.qm"
-        if translator.load(translation_file):
-            QApplication.instance().installTranslator(translator)
-        else:
-            print(f"Translation file '{translation_file}' not found, using default language.")
-        self.update_labels()
-
-    def retranslate_ui(self):
-        self.setWindowTitle(QCoreApplication.translate("MainWindow", "Drifting"))
-        self.tabs.setTabText(0, QCoreApplication.translate("MainWindow", "Travel"))
-        self.tabs.setTabText(1, QCoreApplication.translate("MainWindow", "Inventory"))
-        self.tabs.setTabText(2, QCoreApplication.translate("MainWindow", "Settings"))
-        self.settings_tab.language_label.setText(QCoreApplication.translate("SettingsTab", "Select Language"))

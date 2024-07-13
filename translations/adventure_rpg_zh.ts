@@ -102,7 +102,7 @@
     <name>MainWindow</name>
     <message>
         <location filename="../ui/main_window.py" line="21"/>
-        <source>Drifting</source>
+        <source>Adventure RPG</source>
         <translation>漂泊</translation>
     </message>
     <message>
@@ -207,7 +207,7 @@
     <message>
         <location filename="../ui/travel_tab.py" line="84"/>
         <source>Day {day}, {time}</source>
-        <translation>第 {day} 天, {time}</translation>
+        <translation>天数</translation>
     </message>
     <message>
         <location filename="../ui/travel_tab.py" line="88"/>
