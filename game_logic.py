@@ -1,8 +1,9 @@
+import json
 import random
 from items import Item, Food, Armor, Weapon
 from character import Character
 import config
-from PyQt6.QtCore import QTime
+from PyQt6.QtCore import QTime, QCoreApplication
 from events import EventManager
 
 class GameLogic:
@@ -25,27 +26,33 @@ class GameLogic:
 
     def initialize_inventory(self):
         inventory = {}
-        for item_name, quantity in config.INITIAL_INVENTORY.items():
-            for item_type, items in config.ITEM_DEFINITIONS.items():
-                if item_name in items:
-                    item_data = items[item_name]
-                    if item_type == "Food":
-                        hunger_restore = item_data["hunger_restore"]
-                        thirst_restore = item_data["thirst_restore"]
-                        weight = item_data["weight"]
-                        value = item_data["value"]
-                        inventory[item_name] = Food(item_name, quantity, hunger_restore, thirst_restore, weight, value)
-                    elif item_type == "Weapon":
-                        attack = item_data["attack"]
-                        weight = item_data["weight"]
-                        value = item_data["value"]
-                        inventory[item_name] = Weapon(item_name, quantity, attack, weight, value)
-                    elif item_type == "Armor":
-                        defense = item_data["defense"]
-                        weight = item_data["weight"]
-                        value = item_data["value"]
-                        inventory[item_name] = Armor(item_name, quantity, defense, weight, value)
+        with open('items.json', 'r') as f:
+            items_data = json.load(f)
+            for item_name, quantity in config.INITIAL_INVENTORY.items():
+                for item_type, items in items_data.items():
+                    if item_name in items:
+                        item_data = items[item_name]
+                        if item_type == "Food":
+                            item_name_translated = QCoreApplication.translate("Items", item_name)
+                            hunger_restore = item_data["hunger_restore"]
+                            thirst_restore = item_data["thirst_restore"]
+                            weight = item_data["weight"]
+                            value = item_data["value"]
+                            inventory[item_name_translated] = Food(item_name_translated, quantity, hunger_restore, thirst_restore, weight, value)
+                        elif item_type == "Weapon":
+                            item_name_translated = QCoreApplication.translate("Items", item_name)
+                            attack = item_data["attack"]
+                            weight = item_data["weight"]
+                            value = item_data["value"]
+                            inventory[item_name_translated] = Weapon(item_name_translated, quantity, attack, weight, value)
+                        elif item_type == "Armor":
+                            item_name_translated = QCoreApplication.translate("Items", item_name)
+                            defense = item_data["defense"]
+                            weight = item_data["weight"]
+                            value = item_data["value"]
+                            inventory[item_name_translated] = Armor(item_name_translated, quantity, defense, weight, value)
         return inventory
+
 
     def update_time_and_distance(self):
         if self.is_traveling:

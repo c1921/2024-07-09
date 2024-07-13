@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget, QHBoxLayout, QComboBox, QListWidgetItem
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QCoreApplication
 
 class TravelTab(QWidget):
     def __init__(self, game, toggle_state, change_speed, toggle_pause, show_character_details):
@@ -14,7 +14,7 @@ class TravelTab(QWidget):
         self.show_character_details = show_character_details
 
         self.name_label = QLabel(self)
-        self.name_label.setText(f"Player: {self.game.character.name}")
+        self.name_label.setText(QCoreApplication.translate("TravelTab", "Player: ") + self.game.character.name)
 
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
@@ -22,31 +22,36 @@ class TravelTab(QWidget):
         self.hunger_bar = QProgressBar(self)
         self.hunger_bar.setMaximum(100)
         self.hunger_bar.setValue(int(self.game.hunger))
-        self.hunger_bar.setFormat("Hunger: %p%")
+        self.hunger_bar.setFormat(QCoreApplication.translate("TravelTab", "Hunger: %p%"))
 
         self.thirst_bar = QProgressBar(self)
         self.thirst_bar.setMaximum(100)
         self.thirst_bar.setValue(int(self.game.thirst))
-        self.thirst_bar.setFormat("Thirst: %p%")
+        self.thirst_bar.setFormat(QCoreApplication.translate("TravelTab", "Thirst: %p%"))
 
         self.fatigue_bar = QProgressBar(self)
         self.fatigue_bar.setMaximum(100)
         self.fatigue_bar.setValue(int(self.game.fatigue))
-        self.fatigue_bar.setFormat("Fatigue: %p%")
+        self.fatigue_bar.setFormat(QCoreApplication.translate("TravelTab", "Fatigue: %p%"))
 
         self.mood_bar = QProgressBar(self)
         self.mood_bar.setMaximum(100)
         self.mood_bar.setValue(int(self.game.mood))
-        self.mood_bar.setFormat("Mood: %p%")
+        self.mood_bar.setFormat(QCoreApplication.translate("TravelTab", "Mood: %p%"))
 
-        self.toggle_button = QPushButton("Rest", self)
+        self.toggle_button = QPushButton(QCoreApplication.translate("TravelTab", "Rest"), self)
         self.toggle_button.clicked.connect(self.toggle_state)
 
-        self.pause_button = QPushButton("Pause", self)
+        self.pause_button = QPushButton(QCoreApplication.translate("TravelTab", "Pause"), self)
         self.pause_button.clicked.connect(self.toggle_pause)
 
         self.speed_combo = QComboBox(self)
-        self.speed_combo.addItems(["1x", "2x", "5x", "10x"])
+        self.speed_combo.addItems([
+            QCoreApplication.translate("TravelTab", "1x"),
+            QCoreApplication.translate("TravelTab", "2x"),
+            QCoreApplication.translate("TravelTab", "5x"),
+            QCoreApplication.translate("TravelTab", "10x")
+        ])
         self.speed_combo.currentIndexChanged.connect(lambda index: self.change_speed(index, update_combo=False))
 
         self.log_text = QTextEdit(self)
@@ -70,14 +75,19 @@ class TravelTab(QWidget):
         travel_layout.addWidget(self.mood_bar)
         travel_layout.addLayout(control_layout)
         travel_layout.addWidget(self.log_text)
-        travel_layout.addWidget(QLabel("Companions:"))
+        travel_layout.addWidget(QLabel(QCoreApplication.translate("TravelTab", "Companions:")))
         travel_layout.addWidget(self.companions_list)
 
         self.setLayout(travel_layout)
 
     def update_labels(self):
-        time_text = f"Day {self.game.day_count}, {self.game.game_time.toString('HH:mm')}"
-        distance_text = f"Distance traveled: {int(self.game.distance)} meters"
+        time_text = QCoreApplication.translate("TravelTab", "Day {day}, {time}").format(
+            day=self.game.day_count,
+            time=self.game.game_time.toString('HH:mm')
+        )
+        distance_text = QCoreApplication.translate("TravelTab", "Distance traveled: {distance} meters").format(
+            distance=int(self.game.distance)
+        )
         self.time_label.setText(time_text)
         self.distance_label.setText(distance_text)
 

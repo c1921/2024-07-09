@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QSplitter
-from PyQt6.QtCore import QTimer, Qt
+from PyQt6.QtCore import QTimer, Qt, QCoreApplication
 from PyQt6.QtGui import QKeySequence, QShortcut
 from save_manager import SaveManager
 from ui.travel_tab import TravelTab
@@ -16,9 +16,9 @@ class MainWindow(QMainWindow):
         self.game = game
         self.timer_speed = config.TIMER_INTERVAL
         self.is_paused = False
-        self.save_manager = SaveManager(self.game)  # 添加保存管理器
+        self.save_manager = SaveManager(self.game)
 
-        self.setWindowTitle("Adventure RPG")
+        self.setWindowTitle(QCoreApplication.translate("MainWindow", "Adventure RPG"))
         self.setGeometry(100, 100, 800, 600)
 
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
@@ -26,8 +26,8 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget(self)
         self.travel_tab = TravelTab(self.game, self.toggle_state, self.change_speed, self.toggle_pause, self.show_character_details)
         self.inventory_tab = InventoryTab(self.game, self.show_context_menu)
-        self.tabs.addTab(self.travel_tab, "Travel")
-        self.tabs.addTab(self.inventory_tab, "Inventory")
+        self.tabs.addTab(self.travel_tab, QCoreApplication.translate("MainWindow", "Travel"))
+        self.tabs.addTab(self.inventory_tab, QCoreApplication.translate("MainWindow", "Inventory"))
 
         self.character_details = CharacterDetails()
 
@@ -46,16 +46,16 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(self.update_time_and_distance)
         self.timer.start(self.timer_speed)
 
-        self.save_timer = QTimer(self)  # 添加定时存档计时器
+        self.save_timer = QTimer(self)
         self.save_timer.timeout.connect(self.save_manager.save_game)
-        self.save_timer.start(120000)  # 每2分钟存档一次
+        self.save_timer.start(120000)
 
         self.update_labels()
         self.setup_shortcuts()
-        self.save_manager.load_game()  # 启动时加载存档
+        self.save_manager.load_game()
 
     def closeEvent(self, event):
-        self.save_manager.save_game()  # 关闭时存档
+        self.save_manager.save_game()
         event.accept()
 
     def setup_shortcuts(self):
@@ -94,11 +94,11 @@ class MainWindow(QMainWindow):
 
     def toggle_state(self):
         self.game.is_traveling = not self.game.is_traveling
-        self.travel_tab.toggle_button.setText("Travel" if not self.game.is_traveling else "Rest")
+        self.travel_tab.toggle_button.setText(QCoreApplication.translate("MainWindow", "Travel") if not self.game.is_traveling else QCoreApplication.translate("MainWindow", "Rest"))
 
     def toggle_pause(self):
         self.is_paused = not self.is_paused
-        self.travel_tab.pause_button.setText("Resume" if self.is_paused else "Pause")
+        self.travel_tab.pause_button.setText(QCoreApplication.translate("MainWindow", "Resume") if self.is_paused else QCoreApplication.translate("MainWindow", "Pause"))
 
     def change_speed(self, index, update_combo=False):
         speeds = [config.TIMER_INTERVAL, config.TIMER_INTERVAL // 2, config.TIMER_INTERVAL // 5, config.TIMER_INTERVAL // 10]
@@ -115,10 +115,10 @@ class MainWindow(QMainWindow):
             item = self.game.inventory[item_name]
 
             if isinstance(item, Food):
-                eat_action = menu.addAction("Eat")
+                eat_action = menu.addAction(QCoreApplication.translate("MainWindow", "Eat"))
                 eat_action.triggered.connect(lambda: self.eat_item(item_name))
 
-            discard_action = menu.addAction("Discard")
+            discard_action = menu.addAction(QCoreApplication.translate("MainWindow", "Discard"))
             discard_action.triggered.connect(lambda: self.discard_item(item_name))
 
         menu.exec(self.inventory_tab.inventory_table.viewport().mapToGlobal(position))
