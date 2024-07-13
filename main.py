@@ -9,7 +9,11 @@ def main():
     
     translator = QTranslator()
     locale = QLocale.system().name()
-    translation_file = f"translations/adventure_rpg_{locale}.qm"
+    if locale.startswith("zh"):
+        translation_file = "translations/zh.qm"
+    else:
+        translation_file = "translations/en.qm"
+
     if translator.load(translation_file):
         app.installTranslator(translator)
     else:
