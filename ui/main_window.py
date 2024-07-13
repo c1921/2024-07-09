@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         self.is_paused = False
         self.save_manager = SaveManager(self.game)
 
-        self.setWindowTitle(QCoreApplication.translate("MainWindow", "Adventure RPG"))
+        self.setWindowTitle(QCoreApplication.translate("MainWindow", "Drifting"))
         self.setGeometry(100, 100, 800, 600)
 
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
