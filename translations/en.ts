@@ -4,43 +4,63 @@
   <context>
     <name>CharacterDetails</name>
     <message>
-      <location filename="..\ui\character_details.py" line="11" />
-      <source>Name: </source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui\character_details.py" line="14" />
-      <source>ID: </source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui\character_details.py" line="17" />
-      <source>Attributes: </source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui\character_details.py" line="20" />
-      <source>Skills: </source>
+      <location filename="..\ui\character_details.py" line="12" />
+      <source>Attributes:</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui\character_details.py" line="24" />
+      <source>Skills:</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\character_details.py" line="41" />
       <source>Name: {name}</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\character_details.py" line="25" />
-      <source>ID: {id}</source>
+      <location filename="..\ui\character_details.py" line="42" />
+      <source>Strength: {value}</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\character_details.py" line="26" />
-      <source>Attributes: {attributes}</source>
+      <location filename="..\ui\character_details.py" line="43" />
+      <source>Agility: {value}</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\character_details.py" line="28" />
-      <source>Skills: {skills}</source>
+      <location filename="..\ui\character_details.py" line="44" />
+      <source>Charisma: {value}</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\character_details.py" line="45" />
+      <source>Intelligence: {value}</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\character_details.py" line="46" />
+      <source>Running: {value}</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\character_details.py" line="47" />
+      <source>Riding: {value}</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\character_details.py" line="48" />
+      <source>Management: {value}</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\character_details.py" line="49" />
+      <source>Eloquence: {value}</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\character_details.py" line="50" />
+      <source>Gathering: {value}</source>
       <translation type="unfinished" />
     </message>
   </context>

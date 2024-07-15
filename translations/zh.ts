@@ -4,44 +4,64 @@
 <context>
     <name>CharacterDetails</name>
     <message>
-        <location filename="../ui/character_details.py" line="11"/>
-        <source>Name: </source>
-        <translation>名字： </translation>
-    </message>
-    <message>
-        <location filename="../ui/character_details.py" line="14"/>
-        <source>ID: </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../ui/character_details.py" line="17"/>
-        <source>Attributes: </source>
-        <translation>属性： </translation>
-    </message>
-    <message>
-        <location filename="../ui/character_details.py" line="20"/>
-        <source>Skills: </source>
-        <translation>技能： </translation>
+        <location filename="../ui/character_details.py" line="12"/>
+        <source>Attributes:</source>
+        <translation>能力：</translation>
     </message>
     <message>
         <location filename="../ui/character_details.py" line="24"/>
+        <source>Skills:</source>
+        <translation>技能：</translation>
+    </message>
+    <message>
+        <location filename="../ui/character_details.py" line="41"/>
         <source>Name: {name}</source>
-        <translation>名字： {name}</translation>
+        <translation>姓名：{name}</translation>
     </message>
     <message>
-        <location filename="../ui/character_details.py" line="25"/>
-        <source>ID: {id}</source>
-        <translation></translation>
+        <location filename="../ui/character_details.py" line="42"/>
+        <source>Strength: {value}</source>
+        <translation>力量：{value}</translation>
     </message>
     <message>
-        <location filename="../ui/character_details.py" line="26"/>
-        <source>Attributes: {attributes}</source>
-        <translation>属性：{attributes}</translation>
+        <location filename="../ui/character_details.py" line="43"/>
+        <source>Agility: {value}</source>
+        <translation>敏捷：{value}</translation>
     </message>
     <message>
-        <location filename="../ui/character_details.py" line="28"/>
-        <source>Skills: {skills}</source>
-        <translation>技能：{skills}</translation>
+        <location filename="../ui/character_details.py" line="44"/>
+        <source>Charisma: {value}</source>
+        <translation>魅力：{value}</translation>
+    </message>
+    <message>
+        <location filename="../ui/character_details.py" line="45"/>
+        <source>Intelligence: {value}</source>
+        <translation>智力：{value}</translation>
+    </message>
+    <message>
+        <location filename="../ui/character_details.py" line="46"/>
+        <source>Running: {value}</source>
+        <translation type="unfinished">跑动：{value}</translation>
+    </message>
+    <message>
+        <location filename="../ui/character_details.py" line="47"/>
+        <source>Riding: {value}</source>
+        <translation>骑术：{value}</translation>
+    </message>
+    <message>
+        <location filename="../ui/character_details.py" line="48"/>
+        <source>Management: {value}</source>
+        <translation>管理：{value}</translation>
+    </message>
+    <message>
+        <location filename="../ui/character_details.py" line="49"/>
+        <source>Eloquence: {value}</source>
+        <translation>口才：{value}</translation>
+    </message>
+    <message>
+        <location filename="../ui/character_details.py" line="50"/>
+        <source>Gathering: {value}</source>
+        <translation>采集：{value}</translation>
     </message>
 </context>
 <context>
@@ -70,32 +90,32 @@
         <location filename="../ui/inventory_tab.py" line="79"/>
         <location filename="../ui/inventory_tab.py" line="60"/>
         <source>Weight: </source>
-        <translation>重量： </translation>
+        <translation>重量：</translation>
     </message>
     <message>
         <location filename="../ui/inventory_tab.py" line="67"/>
         <source>, Total Value: </source>
-        <translation>，总价值： </translation>
+        <translation>，总价值：</translation>
     </message>
     <message>
         <location filename="../ui/inventory_tab.py" line="78"/>
         <source>Name: </source>
-        <translation>名称： </translation>
+        <translation>名称：</translation>
     </message>
     <message>
         <location filename="../ui/inventory_tab.py" line="80"/>
         <source>Value: </source>
-        <translation>价值： </translation>
+        <translation>价值：</translation>
     </message>
     <message>
         <location filename="../ui/inventory_tab.py" line="81"/>
         <source>Hunger Restore: </source>
-        <translation>饥饿恢复： </translation>
+        <translation>饥饿恢复：</translation>
     </message>
     <message>
         <location filename="../ui/inventory_tab.py" line="82"/>
         <source>Thirst Restore: </source>
-        <translation>口渴恢复： </translation>
+        <translation>口渴恢复：</translation>
     </message>
 </context>
 <context>
@@ -147,7 +167,7 @@
     <message>
         <location filename="../ui/travel_tab.py" line="17"/>
         <source>Player: </source>
-        <translation>玩家： </translation>
+        <translation>玩家：</translation>
     </message>
     <message>
         <location filename="../ui/travel_tab.py" line="25"/>

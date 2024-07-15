@@ -1,29 +1,50 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
-from PyQt6.QtCore import QCoreApplication
+from PyQt6.QtCore import Qt, QCoreApplication
 
 class CharacterDetails(QWidget):
     def __init__(self):
         super().__init__()
+        self.layout = QVBoxLayout(self)
 
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-
-        self.name_label = QLabel(QCoreApplication.translate("CharacterDetails", "Name: "))
+        self.name_label = QLabel(self)
         self.layout.addWidget(self.name_label)
 
-        self.id_label = QLabel(QCoreApplication.translate("CharacterDetails", "ID: "))
-        self.layout.addWidget(self.id_label)
+        self.attributes_title = QLabel(QCoreApplication.translate("CharacterDetails", "Attributes:"))
+        self.layout.addWidget(self.attributes_title)
 
-        self.attributes_label = QLabel(QCoreApplication.translate("CharacterDetails", "Attributes: "))
-        self.layout.addWidget(self.attributes_label)
+        self.strength_label = QLabel(self)
+        self.agility_label = QLabel(self)
+        self.charisma_label = QLabel(self)
+        self.intelligence_label = QLabel(self)
+        self.layout.addWidget(self.strength_label)
+        self.layout.addWidget(self.agility_label)
+        self.layout.addWidget(self.charisma_label)
+        self.layout.addWidget(self.intelligence_label)
 
-        self.skills_label = QLabel(QCoreApplication.translate("CharacterDetails", "Skills: "))
-        self.layout.addWidget(self.skills_label)
+        self.skills_title = QLabel(QCoreApplication.translate("CharacterDetails", "Skills:"))
+        self.layout.addWidget(self.skills_title)
+
+        self.running_label = QLabel(self)
+        self.riding_label = QLabel(self)
+        self.management_label = QLabel(self)
+        self.eloquence_label = QLabel(self)
+        self.gathering_label = QLabel(self)
+        self.layout.addWidget(self.running_label)
+        self.layout.addWidget(self.riding_label)
+        self.layout.addWidget(self.management_label)
+        self.layout.addWidget(self.eloquence_label)
+        self.layout.addWidget(self.gathering_label)
+
+        self.setLayout(self.layout)
 
     def update_details(self, character):
         self.name_label.setText(QCoreApplication.translate("CharacterDetails", "Name: {name}").format(name=character.name))
-        self.id_label.setText(QCoreApplication.translate("CharacterDetails", "ID: {id}").format(id=character.id))
-        self.attributes_label.setText(QCoreApplication.translate("CharacterDetails", "Attributes: {attributes}").format(
-            attributes=", ".join(f"{k}: {v}" for k, v in character.attributes.items())))
-        self.skills_label.setText(QCoreApplication.translate("CharacterDetails", "Skills: {skills}").format(
-            skills=", ".join(f"{k}: {v}" for k, v in character.skills.items())))
+        self.strength_label.setText(QCoreApplication.translate("CharacterDetails", "Strength: {value}").format(value=character.attributes["Strength"]))
+        self.agility_label.setText(QCoreApplication.translate("CharacterDetails", "Agility: {value}").format(value=character.attributes["Agility"]))
+        self.charisma_label.setText(QCoreApplication.translate("CharacterDetails", "Charisma: {value}").format(value=character.attributes["Charisma"]))
+        self.intelligence_label.setText(QCoreApplication.translate("CharacterDetails", "Intelligence: {value}").format(value=character.attributes["Intelligence"]))
+        self.running_label.setText(QCoreApplication.translate("CharacterDetails", "Running: {value}").format(value=character.skills["Running"]))
+        self.riding_label.setText(QCoreApplication.translate("CharacterDetails", "Riding: {value}").format(value=character.skills["Riding"]))
+        self.management_label.setText(QCoreApplication.translate("CharacterDetails", "Management: {value}").format(value=character.skills["Management"]))
+        self.eloquence_label.setText(QCoreApplication.translate("CharacterDetails", "Eloquence: {value}").format(value=character.skills["Eloquence"]))
+        self.gathering_label.setText(QCoreApplication.translate("CharacterDetails", "Gathering: {value}").format(value=character.skills["Gathering"]))
