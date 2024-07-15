@@ -1,11 +1,10 @@
 from PyQt6.QtWidgets import (
-    QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget, QHBoxLayout, QComboBox, QListWidgetItem
+    QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget, QHBoxLayout, QComboBox, QListWidgetItem, QMenu
 )
-from PyQt6.QtCore import Qt, QCoreApplication
-from PyQt6.QtGui import QFontMetrics
+from PyQt6.QtCore import Qt, QCoreApplication, pyqtSlot, QPoint
 
 class TravelTab(QWidget):
-    def __init__(self, game, toggle_state, change_speed, toggle_pause, show_character_details):
+    def __init__(self, game, toggle_state, change_speed, toggle_pause, show_character_details, invite_to_team):
         super().__init__()
 
         self.game = game
@@ -13,6 +12,7 @@ class TravelTab(QWidget):
         self.change_speed = change_speed
         self.toggle_pause = toggle_pause
         self.show_character_details = show_character_details
+        self.invite_to_team = invite_to_team
 
         self.name_label = QLabel(self)
         self.name_label.setText(QCoreApplication.translate("TravelTab", "Player: ") + self.game.character.name)
@@ -52,6 +52,8 @@ class TravelTab(QWidget):
 
         self.companions_list = QListWidget(self)
         self.companions_list.itemClicked.connect(self.on_companion_clicked)
+        self.companions_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.companions_list.customContextMenuRequested.connect(self.show_context_menu)
 
         control_layout = QHBoxLayout()
         control_layout.addWidget(self.toggle_button)
@@ -98,7 +100,7 @@ class TravelTab(QWidget):
         return layout
 
     def calculate_max_label_width(self, texts):
-        font_metrics = QFontMetrics(self.font())
+        font_metrics = self.fontMetrics()
         return max(font_metrics.horizontalAdvance(text) for text in texts)
 
     def update_labels(self):
@@ -121,19 +123,53 @@ class TravelTab(QWidget):
         self.log_text.clear()
         self.log_text.append("\n".join(self.game.log))
 
-    def update_companions(self, new_companions):
-        current_ids = [self.companions_list.item(i).data(Qt.ItemDataRole.UserRole) for i in range(self.companions_list.count())]
-        new_ids = [comp.id for comp in new_companions]
-
-        if set(current_ids) != set(new_ids):
-            self.companions_list.clear()
-            for companion in new_companions:
-                item = QListWidgetItem(companion.name)
-                item.setData(Qt.ItemDataRole.UserRole, companion.id)
-                self.companions_list.addItem(item)
+    def update_companions(self):
+        self.companions_list.clear()
+        for companion in self.game.companions:
+            item = QListWidgetItem(companion.name)
+            item.setData(Qt.ItemDataRole.UserRole, companion.id)
+            self.companions_list.addItem(item)
 
     def on_companion_clicked(self, item):
         companion_id = item.data(Qt.ItemDataRole.UserRole)
         companion = next((comp for comp in self.game.companions if comp.id == companion_id), None)
         if companion:
             self.show_character_details(companion)
+
+    @pyqtSlot(QPoint)
+    def show_context_menu(self, position):
+        item = self.companions_list.itemAt(position)
+        if item:
+            companion_id = item.data(Qt.ItemDataRole.UserRole)
+            companion = next((comp for comp in self.game.companions if comp.id == companion_id), None)
+            if companion:
+                menu = QMenu(self)
+                talk_action = menu.addAction(QCoreApplication.translate("TravelTab", "Talk"))
+                trade_action = menu.addAction(QCoreApplication.translate("TravelTab", "Trade"))
+                invite_action = menu.addAction(QCoreApplication.translate("TravelTab", "Invite to Team"))
+                attack_action = menu.addAction(QCoreApplication.translate("TravelTab", "Attack"))
+
+                talk_action.triggered.connect(lambda: self.talk_to_companion(companion))
+                trade_action.triggered.connect(lambda: self.trade_with_companion(companion))
+                invite_action.triggered.connect(lambda: self.invite_to_team(companion))
+                attack_action.triggered.connect(lambda: self.attack_companion(companion))
+
+                menu.exec(self.companions_list.viewport().mapToGlobal(position))
+
+    def talk_to_companion(self, companion):
+        self.log_text.append(QCoreApplication.translate("TravelTab", "You talked to {name}.").format(name=companion.name))
+
+    def trade_with_companion(self, companion):
+        self.log_text.append(QCoreApplication.translate("TravelTab", "You traded with {name}.").format(name=companion.name))
+
+    def invite_to_team(self, companion):
+        if companion.affinity >= 60:
+            self.game.companions.remove(companion)
+            self.game.team.append(companion)
+            self.update_companions()
+            self.log_text.append(QCoreApplication.translate("TravelTab", "You invited {name} to your team.").format(name=companion.name))
+        else:
+            self.log_text.append(QCoreApplication.translate("TravelTab", "{name} refused to join your team.").format(name=companion.name))
+
+    def attack_companion(self, companion):
+        self.log_text.append(QCoreApplication.translate("TravelTab", "You attacked {name}.").format(name=companion.name))

@@ -13,7 +13,7 @@ from items.items import Food
 class MainWindow(QMainWindow):
     def __init__(self, game):
         super().__init__()
-        
+
         self.game = game
         self.timer_speed = config.TIMER_INTERVAL
         self.is_paused = False
@@ -25,13 +25,12 @@ class MainWindow(QMainWindow):
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
 
         self.tabs = QTabWidget(self)
-        self.travel_tab = TravelTab(self.game, self.toggle_state, self.change_speed, self.toggle_pause, self.show_character_details)
+        self.travel_tab = TravelTab(self.game, self.toggle_state, self.change_speed, self.toggle_pause, self.show_character_details, self.invite_to_team)
         self.inventory_tab = InventoryTab(self.game, self.show_context_menu)
         self.team_tab = TeamTab(self.game)
         self.tabs.addTab(self.travel_tab, QCoreApplication.translate("MainWindow", "Travel"))
         self.tabs.addTab(self.inventory_tab, QCoreApplication.translate("MainWindow", "Inventory"))
         self.tabs.addTab(self.team_tab, QCoreApplication.translate("MainWindow", "Team"))
-
 
         self.character_details = CharacterDetails()
 
@@ -57,6 +56,8 @@ class MainWindow(QMainWindow):
         self.update_labels()
         self.setup_shortcuts()
         self.save_manager.load_game()
+
+        self.team_tab.character_selected.connect(self.show_character_details)
 
     def closeEvent(self, event):
         self.save_manager.save_game()
@@ -85,7 +86,7 @@ class MainWindow(QMainWindow):
             self.update_labels()
             self.update_inventory()
             self.update_log()
-            self.travel_tab.update_companions(self.game.companions)
+            self.travel_tab.update_companions()
 
     def update_labels(self):
         self.travel_tab.update_labels()
@@ -141,3 +142,13 @@ class MainWindow(QMainWindow):
 
     def show_character_details(self, character):
         self.character_details.update_details(character)
+
+    def invite_to_team(self, companion):
+        if companion.affinity >= 60:
+            self.game.companions.remove(companion)
+            self.game.team.append(companion)
+            self.travel_tab.update_companions()
+            self.team_tab.update_team_table()
+            self.travel_tab.log_text.append(QCoreApplication.translate("MainWindow", "You invited {name} to your team.").format(name=companion.name))
+        else:
+            self.travel_tab.log_text.append(QCoreApplication.translate("MainWindow", "{name} refused to join your team.").format(name=companion.name))

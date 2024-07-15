@@ -11,6 +11,7 @@ class GameLogic:
     def __init__(self):
         self.character = Character("Hero")
         self.companions = []
+        self.team = [self.character]
         self.speed_per_minute = config.SPEED_PER_MINUTE
         self.hunger = config.INITIAL_HUNGER
         self.thirst = config.INITIAL_THIRST

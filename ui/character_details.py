@@ -9,6 +9,9 @@ class CharacterDetails(QWidget):
         self.name_label = QLabel(self)
         self.layout.addWidget(self.name_label)
 
+        self.affinity_label = QLabel(self)
+        self.layout.addWidget(self.affinity_label)
+
         self.attributes_title = QLabel(QCoreApplication.translate("CharacterDetails", "Attributes:"))
         self.layout.addWidget(self.attributes_title)
 
@@ -39,6 +42,7 @@ class CharacterDetails(QWidget):
 
     def update_details(self, character):
         self.name_label.setText(QCoreApplication.translate("CharacterDetails", "Name: {name}").format(name=character.name))
+        self.affinity_label.setText(QCoreApplication.translate("CharacterDetails", "Affinity: {value}").format(value=character.affinity))
         self.strength_label.setText(QCoreApplication.translate("CharacterDetails", "Strength: {value}").format(value=character.attributes["Strength"]))
         self.agility_label.setText(QCoreApplication.translate("CharacterDetails", "Agility: {value}").format(value=character.attributes["Agility"]))
         self.charisma_label.setText(QCoreApplication.translate("CharacterDetails", "Charisma: {value}").format(value=character.attributes["Charisma"]))
