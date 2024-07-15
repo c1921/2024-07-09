@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QProgressBar, QPushButton, QTextEdit, QListWidget, QHBoxLayout, QComboBox, QListWidgetItem
 )
 from PyQt6.QtCore import Qt, QCoreApplication
+from PyQt6.QtGui import QFontMetrics
 
 class TravelTab(QWidget):
     def __init__(self, game, toggle_state, change_speed, toggle_pause, show_character_details):
@@ -19,25 +20,17 @@ class TravelTab(QWidget):
         self.time_label = QLabel(self)
         self.distance_label = QLabel(self)
 
-        self.hunger_bar = QProgressBar(self)
-        self.hunger_bar.setMaximum(100)
-        self.hunger_bar.setValue(int(self.game.hunger))
-        self.hunger_bar.setFormat(QCoreApplication.translate("TravelTab", "Hunger: %p%"))
+        self.hunger_bar = self.create_progress_bar()
+        self.hunger_label = QLabel(self)
 
-        self.thirst_bar = QProgressBar(self)
-        self.thirst_bar.setMaximum(100)
-        self.thirst_bar.setValue(int(self.game.thirst))
-        self.thirst_bar.setFormat(QCoreApplication.translate("TravelTab", "Thirst: %p%"))
+        self.thirst_bar = self.create_progress_bar()
+        self.thirst_label = QLabel(self)
 
-        self.fatigue_bar = QProgressBar(self)
-        self.fatigue_bar.setMaximum(100)
-        self.fatigue_bar.setValue(int(self.game.fatigue))
-        self.fatigue_bar.setFormat(QCoreApplication.translate("TravelTab", "Fatigue: %p%"))
+        self.fatigue_bar = self.create_progress_bar()
+        self.fatigue_label = QLabel(self)
 
-        self.mood_bar = QProgressBar(self)
-        self.mood_bar.setMaximum(100)
-        self.mood_bar.setValue(int(self.game.mood))
-        self.mood_bar.setFormat(QCoreApplication.translate("TravelTab", "Mood: %p%"))
+        self.mood_bar = self.create_progress_bar()
+        self.mood_label = QLabel(self)
 
         self.toggle_button = QPushButton(QCoreApplication.translate("TravelTab", "Rest"), self)
         self.toggle_button.clicked.connect(self.toggle_state)
@@ -69,16 +62,44 @@ class TravelTab(QWidget):
         travel_layout.addWidget(self.name_label)
         travel_layout.addWidget(self.time_label)
         travel_layout.addWidget(self.distance_label)
-        travel_layout.addWidget(self.hunger_bar)
-        travel_layout.addWidget(self.thirst_bar)
-        travel_layout.addWidget(self.fatigue_bar)
-        travel_layout.addWidget(self.mood_bar)
+
+        # 动态计算标签的最大宽度
+        self.max_label_width = self.calculate_max_label_width([
+            QCoreApplication.translate("TravelTab", "Hunger:"),
+            QCoreApplication.translate("TravelTab", "Thirst:"),
+            QCoreApplication.translate("TravelTab", "Fatigue:"),
+            QCoreApplication.translate("TravelTab", "Mood:")
+        ])
+
+        travel_layout.addLayout(self.create_bar_layout(QCoreApplication.translate("TravelTab", "Hunger:"), self.hunger_bar, self.hunger_label))
+        travel_layout.addLayout(self.create_bar_layout(QCoreApplication.translate("TravelTab", "Thirst:"), self.thirst_bar, self.thirst_label))
+        travel_layout.addLayout(self.create_bar_layout(QCoreApplication.translate("TravelTab", "Fatigue:"), self.fatigue_bar, self.fatigue_label))
+        travel_layout.addLayout(self.create_bar_layout(QCoreApplication.translate("TravelTab", "Mood:"), self.mood_bar, self.mood_label))
         travel_layout.addLayout(control_layout)
         travel_layout.addWidget(self.log_text)
         travel_layout.addWidget(QLabel(QCoreApplication.translate("TravelTab", "Companions:")))
         travel_layout.addWidget(self.companions_list)
 
         self.setLayout(travel_layout)
+
+    def create_progress_bar(self):
+        bar = QProgressBar(self)
+        bar.setMaximum(100)
+        bar.setValue(0)
+        return bar
+
+    def create_bar_layout(self, text, bar, value_label):
+        layout = QHBoxLayout()
+        label = QLabel(text, self)
+        label.setFixedWidth(self.max_label_width)  # 设置最大宽度确保对齐
+        layout.addWidget(label)
+        layout.addWidget(bar)
+        layout.addWidget(value_label)
+        return layout
+
+    def calculate_max_label_width(self, texts):
+        font_metrics = QFontMetrics(self.font())
+        return max(font_metrics.horizontalAdvance(text) for text in texts)
 
     def update_labels(self):
         time_text = QCoreApplication.translate("TravelTab", "Day {day}, {time}").format(

@@ -170,67 +170,67 @@
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="25" />
-      <source>Hunger: %p%</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui\travel_tab.py" line="30" />
-      <source>Thirst: %p%</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui\travel_tab.py" line="35" />
-      <source>Fatigue: %p%</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui\travel_tab.py" line="40" />
-      <source>Mood: %p%</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui\travel_tab.py" line="42" />
+      <location filename="..\ui\travel_tab.py" line="34" />
       <source>Rest</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="45" />
+      <location filename="..\ui\travel_tab.py" line="37" />
       <source>Pause</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="50" />
+      <location filename="..\ui\travel_tab.py" line="42" />
       <source>1x</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="51" />
+      <location filename="..\ui\travel_tab.py" line="43" />
       <source>2x</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="52" />
+      <location filename="..\ui\travel_tab.py" line="44" />
       <source>5x</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="53" />
+      <location filename="..\ui\travel_tab.py" line="45" />
       <source>10x</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="78" />
+      <location filename="..\ui\travel_tab.py" line="64" />
+      <source>Hunger:</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\travel_tab.py" line="65" />
+      <source>Thirst:</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\travel_tab.py" line="66" />
+      <source>Fatigue:</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\travel_tab.py" line="67" />
+      <source>Mood:</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\travel_tab.py" line="70" />
       <source>Companions:</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="84" />
+      <location filename="..\ui\travel_tab.py" line="91" />
       <source>Day {day}, {time}</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\ui\travel_tab.py" line="88" />
+      <location filename="..\ui\travel_tab.py" line="95" />
       <source>Distance traveled: {distance} meters</source>
       <translation type="unfinished" />
     </message>

@@ -130,4 +130,4 @@ instance/
 Thumbs.db
 ehthumbs.db
 
-save.json
+save/
