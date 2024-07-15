@@ -3,14 +3,16 @@ import os
 import uuid
 from datetime import datetime
 from PyQt6.QtCore import QTime
-from items import Food, Weapon, Armor
-import config
-from character import Character
+from items.items import Food, Weapon, Armor
+from core.character import Character
 
 class SaveManager:
     def __init__(self, game):
         self.game = game
-        self.save_file = "save.json"
+        self.save_file = "save/save.json"
+        self.items_file_path = os.path.join(os.path.dirname(__file__), '..', 'items', 'items.json')
+        with open(self.items_file_path, 'r', encoding='utf-8') as f:
+            self.items_data = json.load(f)
 
     def save_game(self):
         save_data = {
@@ -60,14 +62,14 @@ class SaveManager:
     def _load_inventory(self, inventory_data):
         inventory = {}
         for item_name, item_data in inventory_data.items():
-            if item_name in config.ITEM_DEFINITIONS["Food"]:
-                item_info = config.ITEM_DEFINITIONS["Food"][item_name]
+            if item_name in self.items_data["Food"]:
+                item_info = self.items_data["Food"][item_name]
                 inventory[item_name] = Food(item_name, item_data["quantity"], item_info["hunger_restore"], item_info["thirst_restore"], item_data["weight"], item_data["value"])
-            elif item_name in config.ITEM_DEFINITIONS["Weapon"]:
-                item_info = config.ITEM_DEFINITIONS["Weapon"][item_name]
+            elif item_name in self.items_data["Weapon"]:
+                item_info = self.items_data["Weapon"][item_name]
                 inventory[item_name] = Weapon(item_name, item_data["quantity"], item_info["attack"], item_data["weight"], item_data["value"])
-            elif item_name in config.ITEM_DEFINITIONS["Armor"]:
-                item_info = config.ITEM_DEFINITIONS["Armor"][item_name]
+            elif item_name in self.items_data["Armor"]:
+                item_info = self.items_data["Armor"][item_name]
                 inventory[item_name] = Armor(item_name, item_data["quantity"], item_info["defense"], item_data["weight"], item_data["value"])
         return inventory
 

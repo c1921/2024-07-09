@@ -1,10 +1,11 @@
 import json
-import random
-from items import Item, Food, Armor, Weapon
-from character import Character
-import config
+import os
+from items.items import Food, Armor, Weapon
+from core.character import Character
+import config.config as config
 from PyQt6.QtCore import QTime, QCoreApplication
-from events import EventManager
+from core.events import EventManager
+
 
 class GameLogic:
     def __init__(self):
@@ -26,7 +27,8 @@ class GameLogic:
 
     def initialize_inventory(self):
         inventory = {}
-        with open('items.json', 'r') as f:
+        items_file_path = os.path.join(os.path.dirname(__file__), '..', 'items', 'items.json')
+        with open(items_file_path, 'r', encoding='utf-8') as f:
             items_data = json.load(f)
             for item_name, quantity in config.INITIAL_INVENTORY.items():
                 for item_type, items in items_data.items():

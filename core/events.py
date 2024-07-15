@@ -1,7 +1,7 @@
 import random
-from character import Character
-from items import Food
-import config
+from core.character import Character
+from items.items import Food
+import config.config as config
 
 class EventManager:
     def __init__(self, game):

@@ -95,7 +95,7 @@
     <message>
         <location filename="../ui/inventory_tab.py" line="82"/>
         <source>Thirst Restore: </source>
-        <translation type="unfinished">口渴恢复： </translation>
+        <translation>口渴恢复： </translation>
     </message>
 </context>
 <context>
@@ -207,7 +207,7 @@
     <message>
         <location filename="../ui/travel_tab.py" line="84"/>
         <source>Day {day}, {time}</source>
-        <translation>天数</translation>
+        <translation type="unfinished">第 {day} 天  {time}</translation>
     </message>
     <message>
         <location filename="../ui/travel_tab.py" line="88"/>

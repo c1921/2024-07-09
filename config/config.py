@@ -1,9 +1,3 @@
-import json
-
-# 加载物品定义
-with open('items.json', 'r') as f:
-    ITEM_DEFINITIONS = json.load(f)
-
 # 游戏配置常量
 SPEED_PER_MINUTE = 80  # 每分钟80米
 INITIAL_HUNGER = 100

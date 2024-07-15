@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QMenu, QAbstractItemView, QToolTip
 )
 from PyQt6.QtCore import Qt, QEvent, QCoreApplication
-from items import Food
+from items.items import Food
 
 class InventoryTab(QWidget):
     def __init__(self, game, show_context_menu):

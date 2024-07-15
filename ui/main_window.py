@@ -1,13 +1,13 @@
 from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QSplitter
 from PyQt6.QtCore import QTimer, Qt, QCoreApplication
 from PyQt6.QtGui import QKeySequence, QShortcut
-from save_manager import SaveManager
+from core.save_manager import SaveManager
 from ui.travel_tab import TravelTab
 from ui.inventory_tab import InventoryTab
 from ui.character_details import CharacterDetails
-from shortcuts import Shortcuts
-import config
-from items import Food
+from core.shortcuts import Shortcuts
+import config.config as config
+from items.items import Food
 
 class MainWindow(QMainWindow):
     def __init__(self, game):

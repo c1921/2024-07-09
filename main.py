@@ -2,12 +2,12 @@ import sys
 import json
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import QTranslator, QLocale
-from game_logic import GameLogic
+from core.game_logic import GameLogic
 from ui.main_window import MainWindow
 
 def load_settings():
     try:
-        with open("settings.json", "r") as f:
+        with open("config/settings.json", "r") as f:
             settings = json.load(f)
     except FileNotFoundError:
         settings = {"language": "en"}
