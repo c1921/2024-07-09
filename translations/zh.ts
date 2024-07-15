@@ -41,7 +41,7 @@
     <message>
         <location filename="../ui/character_details.py" line="46"/>
         <source>Running: {value}</source>
-        <translation type="unfinished">跑动：{value}</translation>
+        <translation>跑动：{value}</translation>
     </message>
     <message>
         <location filename="../ui/character_details.py" line="47"/>
@@ -167,27 +167,27 @@
     <message>
         <location filename="../ui/travel_tab.py" line="17"/>
         <source>Player: </source>
-        <translation>玩家：</translation>
+        <translation type="unfinished">玩家：</translation>
     </message>
     <message>
         <location filename="../ui/travel_tab.py" line="25"/>
         <source>Hunger: %p%</source>
-        <translation>饥饿</translation>
+        <translation>饥饿：%p%</translation>
     </message>
     <message>
         <location filename="../ui/travel_tab.py" line="30"/>
         <source>Thirst: %p%</source>
-        <translation>口渴</translation>
+        <translation>口渴：%p%</translation>
     </message>
     <message>
         <location filename="../ui/travel_tab.py" line="35"/>
         <source>Fatigue: %p%</source>
-        <translation>疲劳</translation>
+        <translation>疲劳：%p%</translation>
     </message>
     <message>
         <location filename="../ui/travel_tab.py" line="40"/>
         <source>Mood: %p%</source>
-        <translation>心情</translation>
+        <translation>心情：%p%</translation>
     </message>
     <message>
         <location filename="../ui/travel_tab.py" line="42"/>
