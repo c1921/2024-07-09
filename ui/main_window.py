@@ -5,6 +5,7 @@ from core.save_manager import SaveManager
 from ui.travel_tab import TravelTab
 from ui.inventory_tab import InventoryTab
 from ui.character_details import CharacterDetails
+from ui.team_tab import TeamTab
 from core.shortcuts import Shortcuts
 import config.config as config
 from items.items import Food
@@ -26,8 +27,11 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget(self)
         self.travel_tab = TravelTab(self.game, self.toggle_state, self.change_speed, self.toggle_pause, self.show_character_details)
         self.inventory_tab = InventoryTab(self.game, self.show_context_menu)
+        self.team_tab = TeamTab(self.game)
         self.tabs.addTab(self.travel_tab, QCoreApplication.translate("MainWindow", "Travel"))
         self.tabs.addTab(self.inventory_tab, QCoreApplication.translate("MainWindow", "Inventory"))
+        self.tabs.addTab(self.team_tab, QCoreApplication.translate("MainWindow", "Team"))
+
 
         self.character_details = CharacterDetails()
 
@@ -85,6 +89,7 @@ class MainWindow(QMainWindow):
 
     def update_labels(self):
         self.travel_tab.update_labels()
+        self.team_tab.update_team_table()
 
     def update_inventory(self):
         self.inventory_tab.update_inventory()

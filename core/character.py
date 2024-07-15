@@ -6,6 +6,7 @@ class Character:
         self.id = uuid.uuid4()
         self.name = name
         self.inventory = {}
+        self.affinity = random.randint(1, 100) 
         self.attributes = {
             'Strength': random.randint(1, 10),
             'Agility': random.randint(1, 10),
