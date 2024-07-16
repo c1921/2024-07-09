@@ -1,11 +1,14 @@
 import random
 import uuid
+import names
 from core.traits import ALL_TRAITS, Trait
 
 class Character:
-    def __init__(self, name):
+    def __init__(self, name, surname, gender):
         self.id = uuid.uuid4()
         self.name = name
+        self.surname = surname
+        self.gender = gender
         self.inventory = {}
         self.affinity = 0  # 好感度默认为 0
         self.attributes = {
@@ -43,6 +46,7 @@ class Character:
 
     @staticmethod
     def random_character():
-        names = ["Alice", "Bob", "Charlie", "Diana", "Edward"]
-        name = random.choice(names)
-        return Character(name)
+        gender = random.choice(['male', 'female'])
+        name = names.get_first_name(gender=gender)
+        surname = names.get_last_name()
+        return Character(name, surname, gender)

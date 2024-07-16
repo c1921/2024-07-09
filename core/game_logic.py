@@ -6,10 +6,9 @@ import config.config as config
 from PyQt6.QtCore import QTime, QCoreApplication
 from core.events import EventManager
 
-
 class GameLogic:
     def __init__(self):
-        self.character = Character("Hero")
+        self.character = Character.random_character()
         self.companions = []
         self.team = [self.character]
         self.speed_per_minute = config.SPEED_PER_MINUTE
@@ -55,7 +54,6 @@ class GameLogic:
                             value = item_data["value"]
                             inventory[item_name_translated] = Armor(item_name_translated, quantity, defense, weight, value)
         return inventory
-
 
     def update_time_and_distance(self):
         if self.is_traveling:

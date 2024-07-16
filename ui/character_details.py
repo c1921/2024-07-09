@@ -63,7 +63,7 @@ class CharacterDetails(QWidget):
         self.character = character
         self.player_character = player_character
 
-        self.name_label.setText(QCoreApplication.translate("CharacterDetails", "Name: {name}").format(name=character.name))
+        self.name_label.setText(QCoreApplication.translate("CharacterDetails", "Name: {name} {surname} ({gender})").format(name=character.name, surname=character.surname, gender=character.gender.capitalize()))
         
         # 计算并显示好感度
         affinity_to_player = character.calculate_affinity(player_character)

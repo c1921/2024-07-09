@@ -18,12 +18,13 @@ class SaveManager:
         save_data = {
             "character": {
                 "name": self.game.character.name,
+                "surname": self.game.character.surname,
+                "gender": self.game.character.gender,
                 "attributes": self.game.character.attributes,
                 "skills": self.game.character.skills,
                 "inventory": {item.name: {"quantity": item.quantity, "weight": item.weight, "value": item.value} for item in self.game.inventory.values()}
             },
-            "companions": [{"id": str(comp.id), "name": comp.name, "attributes": comp.attributes, "skills": comp.skills} for comp in self.game.companions],
-            "team": [{"id": str(comp.id), "name": comp.name, "attributes": comp.attributes, "skills": comp.skills} for comp in self.game.team],
+            "companions": [{"id": str(comp.id), "name": comp.name, "surname": comp.surname, "gender": comp.gender, "attributes": comp.attributes, "skills": comp.skills} for comp in self.game.companions],
             "state": {
                 "hunger": self.game.hunger,
                 "thirst": self.game.thirst,
@@ -44,12 +45,11 @@ class SaveManager:
         if os.path.exists(self.save_file):
             with open(self.save_file, 'r') as f:
                 save_data = json.load(f)
-                self.game.character.name = save_data["character"]["name"]
+                self.game.character = Character(save_data["character"]["name"], save_data["character"]["surname"], save_data["character"]["gender"])
                 self.game.character.attributes = save_data["character"]["attributes"]
                 self.game.character.skills = save_data["character"]["skills"]
                 self.game.inventory = self._load_inventory(save_data["character"]["inventory"])
-                self.game.companions = self._load_companions(save_data.get("companions", []))
-                self.game.team = self._load_companions(save_data.get("team", [self.game.character]))  # Initialize team with main character if not present
+                self.game.companions = self._load_companions(save_data["companions"])
                 self.game.hunger = save_data["state"]["hunger"]
                 self.game.thirst = save_data["state"]["thirst"]
                 self.game.fatigue = save_data["state"]["fatigue"]
@@ -78,7 +78,7 @@ class SaveManager:
     def _load_companions(self, companions_data):
         companions = []
         for comp_data in companions_data:
-            companion = Character(comp_data["name"])
+            companion = Character(comp_data["name"], comp_data["surname"], comp_data["gender"])
             companion.id = uuid.UUID(comp_data["id"])
             companion.attributes = comp_data["attributes"]
             companion.skills = comp_data["skills"]
