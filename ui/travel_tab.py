@@ -93,14 +93,16 @@ class TravelTab(QWidget):
         self.log_text.append("\n".join(self.game.log))
 
     def update_companions(self):
-        selected_ids = [self.companions_list.item(i).data(Qt.ItemDataRole.UserRole) for i in range(self.companions_list.count()) if self.companions_list.item(i).isSelected()]
+        # 保存当前选中的项目
+        selected_items = [self.companions_list.item(i).data(Qt.ItemDataRole.UserRole) for i in range(self.companions_list.count()) if self.companions_list.item(i).isSelected()]
         self.companions_list.clear()
+
         for companion in self.game.companions:
             item = QListWidgetItem(companion.name)
             item.setData(Qt.ItemDataRole.UserRole, companion.id)
-            if companion.id in selected_ids:
-                item.setSelected(True)
             self.companions_list.addItem(item)
+            if companion.id in selected_items:
+                item.setSelected(True)
 
     def on_companion_clicked(self, item):
         companion_id = item.data(Qt.ItemDataRole.UserRole)

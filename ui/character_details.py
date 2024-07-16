@@ -38,6 +38,11 @@ class CharacterDetails(QWidget):
         self.layout.addWidget(self.eloquence_label)
         self.layout.addWidget(self.gathering_label)
 
+        self.traits_title = QLabel(QCoreApplication.translate("CharacterDetails", "Traits:"))
+        self.layout.addWidget(self.traits_title)
+
+        self.traits_labels = []
+
         self.setLayout(self.layout)
 
     def update_details(self, character):
@@ -52,3 +57,13 @@ class CharacterDetails(QWidget):
         self.management_label.setText(QCoreApplication.translate("CharacterDetails", "Management: {value}").format(value=character.skills["Management"]))
         self.eloquence_label.setText(QCoreApplication.translate("CharacterDetails", "Eloquence: {value}").format(value=character.skills["Eloquence"]))
         self.gathering_label.setText(QCoreApplication.translate("CharacterDetails", "Gathering: {value}").format(value=character.skills["Gathering"]))
+
+        # 更新特质显示
+        for label in self.traits_labels:
+            self.layout.removeWidget(label)
+            label.deleteLater()
+        self.traits_labels = []
+        for trait in character.traits:
+            label = QLabel(f"{trait.name}", self)
+            self.traits_labels.append(label)
+            self.layout.addWidget(label)
