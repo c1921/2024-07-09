@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QToolTip
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QToolTip, QGroupBox, QHBoxLayout, QFormLayout
 from PyQt6.QtCore import Qt, QCoreApplication, QPoint
 
 class CharacterDetails(QWidget):
@@ -9,49 +9,51 @@ class CharacterDetails(QWidget):
         self.name_label = QLabel(self)
         self.layout.addWidget(self.name_label)
 
-        self.affinity_label = QLabel(self)
-        self.layout.addWidget(self.affinity_label)
-        self.affinity_label.setMouseTracking(True)  # 启用鼠标跟踪
-        self.affinity_label.installEventFilter(self)  # 安装事件过滤器
-
+        # Affinity Group
+        self.affinity_group = QGroupBox(QCoreApplication.translate("CharacterDetails", "Affinity"))
+        self.affinity_layout = QVBoxLayout(self.affinity_group)
         self.affinity_label_to_player = QLabel(self)
-        self.layout.addWidget(self.affinity_label_to_player)
         self.affinity_label_to_player.setMouseTracking(True)
         self.affinity_label_to_player.installEventFilter(self)
-
+        self.affinity_layout.addWidget(self.affinity_label_to_player)
         self.affinity_label_from_player = QLabel(self)
-        self.layout.addWidget(self.affinity_label_from_player)
         self.affinity_label_from_player.setMouseTracking(True)
         self.affinity_label_from_player.installEventFilter(self)
+        self.affinity_layout.addWidget(self.affinity_label_from_player)
+        self.layout.addWidget(self.affinity_group)
 
-        self.attributes_title = QLabel(QCoreApplication.translate("CharacterDetails", "Attributes:"))
-        self.layout.addWidget(self.attributes_title)
-
+        # Attributes Group
+        self.attributes_group = QGroupBox(QCoreApplication.translate("CharacterDetails", "Attributes"))
+        self.attributes_layout = QFormLayout(self.attributes_group)
         self.strength_label = QLabel(self)
-        self.layout.addWidget(self.strength_label)
+        self.attributes_layout.addRow(QCoreApplication.translate("CharacterDetails", "Strength:"), self.strength_label)
         self.agility_label = QLabel(self)
-        self.layout.addWidget(self.agility_label)
+        self.attributes_layout.addRow(QCoreApplication.translate("CharacterDetails", "Agility:"), self.agility_label)
         self.charisma_label = QLabel(self)
-        self.layout.addWidget(self.charisma_label)
+        self.attributes_layout.addRow(QCoreApplication.translate("CharacterDetails", "Charisma:"), self.charisma_label)
         self.intelligence_label = QLabel(self)
-        self.layout.addWidget(self.intelligence_label)
+        self.attributes_layout.addRow(QCoreApplication.translate("CharacterDetails", "Intelligence:"), self.intelligence_label)
+        self.layout.addWidget(self.attributes_group)
 
-        self.skills_title = QLabel(QCoreApplication.translate("CharacterDetails", "Skills:"))
-        self.layout.addWidget(self.skills_title)
-
+        # Skills Group
+        self.skills_group = QGroupBox(QCoreApplication.translate("CharacterDetails", "Skills"))
+        self.skills_layout = QFormLayout(self.skills_group)
         self.running_label = QLabel(self)
-        self.layout.addWidget(self.running_label)
+        self.skills_layout.addRow(QCoreApplication.translate("CharacterDetails", "Running:"), self.running_label)
         self.riding_label = QLabel(self)
-        self.layout.addWidget(self.riding_label)
+        self.skills_layout.addRow(QCoreApplication.translate("CharacterDetails", "Riding:"), self.riding_label)
         self.management_label = QLabel(self)
-        self.layout.addWidget(self.management_label)
+        self.skills_layout.addRow(QCoreApplication.translate("CharacterDetails", "Management:"), self.management_label)
         self.eloquence_label = QLabel(self)
-        self.layout.addWidget(self.eloquence_label)
+        self.skills_layout.addRow(QCoreApplication.translate("CharacterDetails", "Eloquence:"), self.eloquence_label)
         self.gathering_label = QLabel(self)
-        self.layout.addWidget(self.gathering_label)
+        self.skills_layout.addRow(QCoreApplication.translate("CharacterDetails", "Gathering:"), self.gathering_label)
+        self.layout.addWidget(self.skills_group)
 
-        self.traits_title = QLabel(QCoreApplication.translate("CharacterDetails", "Traits:"))
-        self.layout.addWidget(self.traits_title)
+        # Traits Group
+        self.traits_group = QGroupBox(QCoreApplication.translate("CharacterDetails", "Traits"))
+        self.traits_layout = QVBoxLayout(self.traits_group)
+        self.layout.addWidget(self.traits_group)
 
         self.traits_labels = []
 
@@ -69,25 +71,25 @@ class CharacterDetails(QWidget):
         self.affinity_label_to_player.setText(QCoreApplication.translate("CharacterDetails", "Affinity to Player: {value}").format(value=affinity_to_player))
         self.affinity_label_from_player.setText(QCoreApplication.translate("CharacterDetails", "Affinity from Player: {value}").format(value=affinity_from_player))
         
-        self.strength_label.setText(QCoreApplication.translate("CharacterDetails", "Strength: {value}").format(value=character.attributes["Strength"]))
-        self.agility_label.setText(QCoreApplication.translate("CharacterDetails", "Agility: {value}").format(value=character.attributes["Agility"]))
-        self.charisma_label.setText(QCoreApplication.translate("CharacterDetails", "Charisma: {value}").format(value=character.attributes["Charisma"]))
-        self.intelligence_label.setText(QCoreApplication.translate("CharacterDetails", "Intelligence: {value}").format(value=character.attributes["Intelligence"]))
-        self.running_label.setText(QCoreApplication.translate("CharacterDetails", "Running: {value}").format(value=character.skills["Running"]))
-        self.riding_label.setText(QCoreApplication.translate("CharacterDetails", "Riding: {value}").format(value=character.skills["Riding"]))
-        self.management_label.setText(QCoreApplication.translate("CharacterDetails", "Management: {value}").format(value=character.skills["Management"]))
-        self.eloquence_label.setText(QCoreApplication.translate("CharacterDetails", "Eloquence: {value}").format(value=character.skills["Eloquence"]))
-        self.gathering_label.setText(QCoreApplication.translate("CharacterDetails", "Gathering: {value}").format(value=character.skills["Gathering"]))
+        self.strength_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.attributes["Strength"]))
+        self.agility_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.attributes["Agility"]))
+        self.charisma_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.attributes["Charisma"]))
+        self.intelligence_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.attributes["Intelligence"]))
+        self.running_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.skills["Running"]))
+        self.riding_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.skills["Riding"]))
+        self.management_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.skills["Management"]))
+        self.eloquence_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.skills["Eloquence"]))
+        self.gathering_label.setText(QCoreApplication.translate("CharacterDetails", "{value}").format(value=character.skills["Gathering"]))
 
         # 更新特质显示
         for label in self.traits_labels:
-            self.layout.removeWidget(label)
+            self.traits_layout.removeWidget(label)
             label.deleteLater()
         self.traits_labels = []
         for trait in character.traits:
             label = QLabel(f"{trait.name}", self)
             self.traits_labels.append(label)
-            self.layout.addWidget(label)
+            self.traits_layout.addWidget(label)
 
     def eventFilter(self, source, event):
         if event.type() == event.Type.ToolTip:
