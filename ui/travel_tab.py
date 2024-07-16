@@ -17,9 +17,6 @@ class TravelTab(QWidget):
         self.name_label = QLabel(self)
         self.name_label.setText(QCoreApplication.translate("TravelTab", "Player: ") + self.game.character.name)
 
-        self.time_label = QLabel(self)
-        self.distance_label = QLabel(self)
-
         self.hunger_bar = self.create_progress_bar()
         self.hunger_label = QLabel(self)
 
@@ -35,18 +32,6 @@ class TravelTab(QWidget):
         self.toggle_button = QPushButton(QCoreApplication.translate("TravelTab", "Rest"), self)
         self.toggle_button.clicked.connect(self.toggle_state)
 
-        self.pause_button = QPushButton(QCoreApplication.translate("TravelTab", "Pause"), self)
-        self.pause_button.clicked.connect(self.toggle_pause)
-
-        self.speed_combo = QComboBox(self)
-        self.speed_combo.addItems([
-            QCoreApplication.translate("TravelTab", "1x"),
-            QCoreApplication.translate("TravelTab", "2x"),
-            QCoreApplication.translate("TravelTab", "5x"),
-            QCoreApplication.translate("TravelTab", "10x")
-        ])
-        self.speed_combo.currentIndexChanged.connect(lambda index: self.change_speed(index, update_combo=False))
-
         self.log_text = QTextEdit(self)
         self.log_text.setReadOnly(True)
 
@@ -57,15 +42,10 @@ class TravelTab(QWidget):
 
         control_layout = QHBoxLayout()
         control_layout.addWidget(self.toggle_button)
-        control_layout.addWidget(self.pause_button)
-        control_layout.addWidget(self.speed_combo)
 
         travel_layout = QVBoxLayout()
         travel_layout.addWidget(self.name_label)
-        travel_layout.addWidget(self.time_label)
-        travel_layout.addWidget(self.distance_label)
 
-        # 动态计算标签的最大宽度
         self.max_label_width = self.calculate_max_label_width([
             QCoreApplication.translate("TravelTab", "Hunger:"),
             QCoreApplication.translate("TravelTab", "Thirst:"),
@@ -104,30 +84,22 @@ class TravelTab(QWidget):
         return max(font_metrics.horizontalAdvance(text) for text in texts)
 
     def update_labels(self):
-        time_text = QCoreApplication.translate("TravelTab", "Day {day}, {time}").format(
-            day=self.game.day_count,
-            time=self.game.game_time.toString('HH:mm')
-        )
-        distance_text = QCoreApplication.translate("TravelTab", "Distance traveled: {distance} meters").format(
-            distance=int(self.game.distance)
-        )
-        self.time_label.setText(time_text)
-        self.distance_label.setText(distance_text)
-
         self.hunger_bar.setValue(int(self.game.hunger))
         self.thirst_bar.setValue(int(self.game.thirst))
         self.fatigue_bar.setValue(int(self.game.fatigue))
         self.mood_bar.setValue(int(self.game.mood))
 
     def update_log(self):
-        self.log_text.clear()
         self.log_text.append("\n".join(self.game.log))
 
     def update_companions(self):
+        selected_ids = [self.companions_list.item(i).data(Qt.ItemDataRole.UserRole) for i in range(self.companions_list.count()) if self.companions_list.item(i).isSelected()]
         self.companions_list.clear()
         for companion in self.game.companions:
             item = QListWidgetItem(companion.name)
             item.setData(Qt.ItemDataRole.UserRole, companion.id)
+            if companion.id in selected_ids:
+                item.setSelected(True)
             self.companions_list.addItem(item)
 
     def on_companion_clicked(self, item):
@@ -157,19 +129,23 @@ class TravelTab(QWidget):
                 menu.exec(self.companions_list.viewport().mapToGlobal(position))
 
     def talk_to_companion(self, companion):
-        self.log_text.append(QCoreApplication.translate("TravelTab", "You talked to {name}.").format(name=companion.name))
+        self.game.log.append(QCoreApplication.translate("TravelTab", "You talked to {name}.").format(name=companion.name))
+        self.update_log()
 
     def trade_with_companion(self, companion):
-        self.log_text.append(QCoreApplication.translate("TravelTab", "You traded with {name}.").format(name=companion.name))
+        self.game.log.append(QCoreApplication.translate("TravelTab", "You traded with {name}.").format(name=companion.name))
+        self.update_log()
 
     def invite_to_team(self, companion):
         if companion.affinity >= 60:
             self.game.companions.remove(companion)
             self.game.team.append(companion)
             self.update_companions()
-            self.log_text.append(QCoreApplication.translate("TravelTab", "You invited {name} to your team.").format(name=companion.name))
+            self.game.log.append(QCoreApplication.translate("TravelTab", "You invited {name} to your team.").format(name=companion.name))
         else:
-            self.log_text.append(QCoreApplication.translate("TravelTab", "{name} refused to join your team.").format(name=companion.name))
+            self.game.log.append(QCoreApplication.translate("TravelTab", "{name} refused to join your team.").format(name=companion.name))
+        self.update_log()
 
     def attack_companion(self, companion):
-        self.log_text.append(QCoreApplication.translate("TravelTab", "You attacked {name}.").format(name=companion.name))
+        self.game.log.append(QCoreApplication.translate("TravelTab", "You attacked {name}.").format(name=companion.name))
+        self.update_log()

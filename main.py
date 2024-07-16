@@ -16,6 +16,8 @@ def load_settings():
 def main():
     app = QApplication(sys.argv)
     
+    app.setStyle('Fusion')
+    
     translator = QTranslator()
     settings = load_settings()
     language = settings.get("language", "en")

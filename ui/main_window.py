@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QSplitter
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QTabWidget, QMenu, QSplitter, QLabel, QHBoxLayout, QPushButton, QComboBox
 from PyQt6.QtCore import QTimer, Qt, QCoreApplication
 from PyQt6.QtGui import QKeySequence, QShortcut
 from core.save_manager import SaveManager
@@ -38,7 +38,32 @@ class MainWindow(QMainWindow):
         self.splitter.addWidget(self.character_details)
         self.splitter.setSizes([500, 300])
 
+        self.time_label = QLabel(self)
+        self.distance_label = QLabel(self)
+
+        self.pause_button = QPushButton(QCoreApplication.translate("MainWindow", "Pause"), self)
+        self.pause_button.clicked.connect(self.toggle_pause)
+
+        self.speed_combo = QComboBox(self)
+        self.speed_combo.addItems([
+            QCoreApplication.translate("MainWindow", "1x"),
+            QCoreApplication.translate("MainWindow", "2x"),
+            QCoreApplication.translate("MainWindow", "5x"),
+            QCoreApplication.translate("MainWindow", "10x")
+        ])
+        self.speed_combo.currentIndexChanged.connect(lambda index: self.change_speed(index, update_combo=False))
+
+        top_layout = QHBoxLayout()
+        top_layout.addWidget(self.time_label)
+        top_layout.addWidget(self.distance_label)
+        top_layout.addWidget(self.pause_button)
+        top_layout.addWidget(self.speed_combo)
+
+        top_widget = QWidget()
+        top_widget.setLayout(top_layout)
+
         main_layout = QVBoxLayout()
+        main_layout.addWidget(top_widget)
         main_layout.addWidget(self.splitter)
 
         container = QWidget()
@@ -89,6 +114,16 @@ class MainWindow(QMainWindow):
             self.travel_tab.update_companions()
 
     def update_labels(self):
+        time_text = QCoreApplication.translate("MainWindow", "Day {day}, {time}").format(
+            day=self.game.day_count,
+            time=self.game.game_time.toString('HH:mm')
+        )
+        distance_text = QCoreApplication.translate("MainWindow", "Distance traveled: {distance} meters").format(
+            distance=int(self.game.distance)
+        )
+        self.time_label.setText(time_text)
+        self.distance_label.setText(distance_text)
+
         self.travel_tab.update_labels()
         self.team_tab.update_team_table()
 
@@ -104,14 +139,14 @@ class MainWindow(QMainWindow):
 
     def toggle_pause(self):
         self.is_paused = not self.is_paused
-        self.travel_tab.pause_button.setText(QCoreApplication.translate("MainWindow", "Resume") if self.is_paused else QCoreApplication.translate("MainWindow", "Pause"))
+        self.pause_button.setText(QCoreApplication.translate("MainWindow", "Resume") if self.is_paused else QCoreApplication.translate("MainWindow", "Pause"))
 
     def change_speed(self, index, update_combo=False):
         speeds = [config.TIMER_INTERVAL, config.TIMER_INTERVAL // 2, config.TIMER_INTERVAL // 5, config.TIMER_INTERVAL // 10]
         self.timer_speed = speeds[index]
         self.timer.start(self.timer_speed)
         if update_combo:
-            self.travel_tab.speed_combo.setCurrentIndex(index)
+            self.speed_combo.setCurrentIndex(index)
 
     def show_context_menu(self, position):
         menu = QMenu()
@@ -149,6 +184,7 @@ class MainWindow(QMainWindow):
             self.game.team.append(companion)
             self.travel_tab.update_companions()
             self.team_tab.update_team_table()
-            self.travel_tab.log_text.append(QCoreApplication.translate("MainWindow", "You invited {name} to your team.").format(name=companion.name))
+            self.game.log.append(QCoreApplication.translate("MainWindow", "You invited {name} to your team.").format(name=companion.name))
         else:
-            self.travel_tab.log_text.append(QCoreApplication.translate("MainWindow", "{name} refused to join your team.").format(name=companion.name))
+            self.game.log.append(QCoreApplication.translate("MainWindow", "{name} refused to join your team.").format(name=companion.name))
+        self.update_log()
