@@ -56,6 +56,6 @@ class TeamTab(QWidget):
 
     def on_cell_clicked(self, row, column):
         character_id = self.team_table.item(row, 0).data(Qt.ItemDataRole.UserRole)
-        character = next((comp for comp in self.game.team if comp.id == character_id), None)
+        character = next((comp for comp in [self.game.character] + self.game.team if comp.id == character_id), None)
         if character:
             self.character_selected.emit(character)
