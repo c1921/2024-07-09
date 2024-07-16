@@ -48,9 +48,10 @@ class CharacterDetails(QWidget):
     def update_details(self, character, player_character):
         self.name_label.setText(QCoreApplication.translate("CharacterDetails", "Name: {name}").format(name=character.name))
         
-        # 计算并显示其他角色对玩家角色的好感度
+        # 计算并显示好感度
         affinity_to_player = character.calculate_affinity(player_character)
-        self.affinity_label.setText(QCoreApplication.translate("CharacterDetails", "Affinity to Player: {value}").format(value=affinity_to_player))
+        affinity_from_player = player_character.calculate_affinity(character)
+        self.affinity_label.setText(QCoreApplication.translate("CharacterDetails", "Affinity: {to_player} | {from_player}").format(to_player=affinity_to_player, from_player=affinity_from_player))
         
         self.strength_label.setText(QCoreApplication.translate("CharacterDetails", "Strength: {value}").format(value=character.attributes["Strength"]))
         self.agility_label.setText(QCoreApplication.translate("CharacterDetails", "Agility: {value}").format(value=character.attributes["Agility"]))
