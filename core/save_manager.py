@@ -23,6 +23,7 @@ class SaveManager:
                 "inventory": {item.name: {"quantity": item.quantity, "weight": item.weight, "value": item.value} for item in self.game.inventory.values()}
             },
             "companions": [{"id": str(comp.id), "name": comp.name, "attributes": comp.attributes, "skills": comp.skills} for comp in self.game.companions],
+            "team": [{"id": str(comp.id), "name": comp.name, "attributes": comp.attributes, "skills": comp.skills} for comp in self.game.team],
             "state": {
                 "hunger": self.game.hunger,
                 "thirst": self.game.thirst,
@@ -47,7 +48,8 @@ class SaveManager:
                 self.game.character.attributes = save_data["character"]["attributes"]
                 self.game.character.skills = save_data["character"]["skills"]
                 self.game.inventory = self._load_inventory(save_data["character"]["inventory"])
-                self.game.companions = self._load_companions(save_data["companions"])
+                self.game.companions = self._load_companions(save_data.get("companions", []))
+                self.game.team = self._load_companions(save_data.get("team", [self.game.character]))  # Initialize team with main character if not present
                 self.game.hunger = save_data["state"]["hunger"]
                 self.game.thirst = save_data["state"]["thirst"]
                 self.game.fatigue = save_data["state"]["fatigue"]

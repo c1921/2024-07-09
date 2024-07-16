@@ -25,6 +25,12 @@ class TeamTab(QWidget):
         self.update_team_table()
 
     def update_team_table(self):
+        # 保存当前选中单元格
+        selected_items = self.team_table.selectedItems()
+        selected_cell = None
+        if selected_items:
+            selected_cell = (self.team_table.row(selected_items[0]), self.team_table.column(selected_items[0]))
+
         self.team_table.setRowCount(0)
 
         # 插入玩家角色
@@ -33,6 +39,10 @@ class TeamTab(QWidget):
         # 插入团队角色
         for i, companion in enumerate(self.game.team[1:], start=1):  # 排除玩家角色
             self.insert_character_to_table(companion, i)
+
+        # 恢复之前的选中单元格
+        if selected_cell:
+            self.team_table.setCurrentCell(selected_cell[0], selected_cell[1])
 
     def insert_character_to_table(self, character, row):
         self.team_table.insertRow(row)
