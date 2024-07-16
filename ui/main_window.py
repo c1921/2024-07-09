@@ -176,7 +176,7 @@ class MainWindow(QMainWindow):
         self.update_log()
 
     def show_character_details(self, character):
-        self.character_details.update_details(character)
+        self.character_details.update_details(character, self.game.character)
 
     def invite_to_team(self, companion):
         if companion.affinity >= 60:
