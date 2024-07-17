@@ -82,7 +82,7 @@ class MainWindow(QMainWindow):
         self.setup_shortcuts()
         self.save_manager.load_game()
 
-        self.team_tab.character_selected.connect(self.show_character_details)
+        self.team_tab.character_selected.connect(lambda character: self.show_character_details(character))
 
     def closeEvent(self, event):
         self.save_manager.save_game()
@@ -179,7 +179,8 @@ class MainWindow(QMainWindow):
         self.character_details.update_details(character, self.game.character)
 
     def invite_to_team(self, companion):
-        if companion.affinity >= 60:
+        affinity_to_player = companion.calculate_affinity(self.game.character, self.game.character)
+        if affinity_to_player > 40:
             self.game.companions.remove(companion)
             self.game.team.append(companion)
             self.travel_tab.update_companions()

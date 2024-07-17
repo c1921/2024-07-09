@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QToolTip, QGroupBox, QHBoxLayout, QFormLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QToolTip, QGroupBox, QFormLayout
 from PyQt6.QtCore import Qt, QCoreApplication, QPoint
 
 class CharacterDetails(QWidget):
@@ -66,8 +66,8 @@ class CharacterDetails(QWidget):
         self.name_label.setText(QCoreApplication.translate("CharacterDetails", "Name: {name} {surname} ({gender})").format(name=character.name, surname=character.surname, gender=character.gender.capitalize()))
         
         # 计算并显示好感度
-        affinity_to_player = character.calculate_affinity(player_character)
-        affinity_from_player = player_character.calculate_affinity(character)
+        affinity_to_player = character.calculate_affinity(player_character, player_character)
+        affinity_from_player = player_character.calculate_affinity(character, character)
         self.affinity_label_to_player.setText(QCoreApplication.translate("CharacterDetails", "Affinity to Player: {value}").format(value=affinity_to_player))
         self.affinity_label_from_player.setText(QCoreApplication.translate("CharacterDetails", "Affinity from Player: {value}").format(value=affinity_from_player))
         
@@ -103,7 +103,7 @@ class CharacterDetails(QWidget):
 
     def generate_tooltip_text(self, from_character, to_character):
         # 计算角色对玩家的好感度详细信息
-        affinity = from_character.calculate_affinity(to_character)
+        affinity = from_character.calculate_affinity(to_character, to_character)
         
         details = []
         details.append(f"{from_character.name}'s affinity to {to_character.name}")

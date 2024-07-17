@@ -139,14 +139,7 @@ class TravelTab(QWidget):
         self.update_log()
 
     def invite_to_team(self, companion):
-        if companion.affinity >= 60:
-            self.game.companions.remove(companion)
-            self.game.team.append(companion)
-            self.update_companions()
-            self.game.log.append(QCoreApplication.translate("TravelTab", "You invited {name} to your team.").format(name=companion.name))
-        else:
-            self.game.log.append(QCoreApplication.translate("TravelTab", "{name} refused to join your team.").format(name=companion.name))
-        self.update_log()
+        self.invite_to_team(companion)
 
     def attack_companion(self, companion):
         self.game.log.append(QCoreApplication.translate("TravelTab", "You attacked {name}.").format(name=companion.name))

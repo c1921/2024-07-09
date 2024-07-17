@@ -24,7 +24,7 @@ class SaveManager:
                 "skills": self.game.character.skills,
                 "inventory": {item.name: {"quantity": item.quantity, "weight": item.weight, "value": item.value} for item in self.game.inventory.values()}
             },
-            "companions": [{"id": str(comp.id), "name": comp.name, "surname": comp.surname, "gender": comp.gender, "attributes": comp.attributes, "skills": comp.skills} for comp in self.game.companions],
+            "team": [{"id": str(comp.id), "name": comp.name, "surname": comp.surname, "gender": comp.gender, "attributes": comp.attributes, "skills": comp.skills} for comp in self.game.team],
             "state": {
                 "hunger": self.game.hunger,
                 "thirst": self.game.thirst,
@@ -49,7 +49,7 @@ class SaveManager:
                 self.game.character.attributes = save_data["character"]["attributes"]
                 self.game.character.skills = save_data["character"]["skills"]
                 self.game.inventory = self._load_inventory(save_data["character"]["inventory"])
-                self.game.companions = self._load_companions(save_data["companions"])
+                self.game.team = self._load_team(save_data["team"])
                 self.game.hunger = save_data["state"]["hunger"]
                 self.game.thirst = save_data["state"]["thirst"]
                 self.game.fatigue = save_data["state"]["fatigue"]
@@ -75,12 +75,12 @@ class SaveManager:
                 inventory[item_name] = Armor(item_name, item_data["quantity"], item_info["defense"], item_data["weight"], item_data["value"])
         return inventory
 
-    def _load_companions(self, companions_data):
-        companions = []
-        for comp_data in companions_data:
+    def _load_team(self, team_data):
+        team = []
+        for comp_data in team_data:
             companion = Character(comp_data["name"], comp_data["surname"], comp_data["gender"])
             companion.id = uuid.UUID(comp_data["id"])
             companion.attributes = comp_data["attributes"]
             companion.skills = comp_data["skills"]
-            companions.append(companion)
-        return companions
+            team.append(companion)
+        return team

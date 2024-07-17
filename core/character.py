@@ -35,8 +35,10 @@ class Character:
                 final_traits.append(trait)
         return final_traits
 
-    def calculate_affinity(self, other_character):
-        affinity = other_character.attributes['Charisma'] * 5  # 基于魅力值的基础好感度
+    def calculate_affinity(self, other_character, use_charisma):
+        # 使用指定角色的魅力值进行计算
+        charisma_bonus = use_charisma.attributes['Charisma'] * 5
+        affinity = charisma_bonus  # 基于魅力值的基础好感度
         for trait in self.traits:
             if trait in other_character.traits:
                 affinity += 20

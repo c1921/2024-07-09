@@ -11,10 +11,12 @@ class TeamTab(QWidget):
 
         self.layout = QVBoxLayout(self)
         self.team_table = QTableWidget(self)
-        self.team_table.setColumnCount(2)
+        self.team_table.setColumnCount(4)
         self.team_table.setHorizontalHeaderLabels([
             QCoreApplication.translate("TeamTab", "Name"),
-            QCoreApplication.translate("TeamTab", "Affinity")
+            QCoreApplication.translate("TeamTab", "Gender"),
+            QCoreApplication.translate("TeamTab", "Affinity to Player"),
+            QCoreApplication.translate("TeamTab", "Affinity from Player")
         ])
         self.team_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.team_table.cellClicked.connect(self.on_cell_clicked)
@@ -46,16 +48,30 @@ class TeamTab(QWidget):
 
     def insert_character_to_table(self, character, row):
         self.team_table.insertRow(row)
+
         name_item = QTableWidgetItem(character.name)
         name_item.setData(Qt.ItemDataRole.UserRole, character.id)
         name_item.setFlags(name_item.flags() ^ Qt.ItemFlag.ItemIsEditable)  # 不可编辑
-        affinity_item = QTableWidgetItem(str(character.affinity))  # 假设每个角色有affinity属性
-        affinity_item.setFlags(affinity_item.flags() ^ Qt.ItemFlag.ItemIsEditable)  # 不可编辑
+
+        gender_symbol = "♂" if character.gender == "male" else "♀"
+        gender_item = QTableWidgetItem(gender_symbol)
+        gender_item.setFlags(gender_item.flags() ^ Qt.ItemFlag.ItemIsEditable)  # 不可编辑
+
+        affinity_to_player = character.calculate_affinity(self.game.character, self.game.character)
+        affinity_to_player_item = QTableWidgetItem(str(affinity_to_player))
+        affinity_to_player_item.setFlags(affinity_to_player_item.flags() ^ Qt.ItemFlag.ItemIsEditable)  # 不可编辑
+
+        affinity_from_player = self.game.character.calculate_affinity(character, character)
+        affinity_from_player_item = QTableWidgetItem(str(affinity_from_player))
+        affinity_from_player_item.setFlags(affinity_from_player_item.flags() ^ Qt.ItemFlag.ItemIsEditable)  # 不可编辑
+
         self.team_table.setItem(row, 0, name_item)
-        self.team_table.setItem(row, 1, affinity_item)
+        self.team_table.setItem(row, 1, gender_item)
+        self.team_table.setItem(row, 2, affinity_to_player_item)
+        self.team_table.setItem(row, 3, affinity_from_player_item)
 
     def on_cell_clicked(self, row, column):
         character_id = self.team_table.item(row, 0).data(Qt.ItemDataRole.UserRole)
-        character = next((comp for comp in [self.game.character] + self.game.team if comp.id == character_id), None)
+        character = next((comp for comp in self.game.team if comp.id == character_id), None)
         if character:
             self.character_selected.emit(character)
